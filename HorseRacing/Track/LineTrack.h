@@ -5,6 +5,8 @@
 #include "Horse/Horse.h"
 
 namespace horseracing {
+	class RaceOrganizer;
+
 	class LineTrack : public Mint::Level
 	{
 		RTTI_DECLARATIONS(LineTrack, Level)
@@ -16,11 +18,15 @@ namespace horseracing {
 
 		// 이벤트 함수 오버라이드
 		// 맵을 그린다
-		void Draw() override;
+		void Draw(CHAR_INFO* backBuffer, int width, int height) override;
 
 	private:
 		// 게임에서 사용할 맵을 로드하는 함수
 		void LoadMap(const char* fileName);
+
+		void RenderToBuffer(CHAR_INFO* buffer, int width, int height);
+
+		void PrepareNewGame(RaceOrganizer& organizer);
 
 		void Reset();
 
@@ -42,7 +48,7 @@ namespace horseracing {
 		float track_width_ = 1.0f;
 
 		// 얕은 복사 !! UpdateRanks를 위한 전용 변수 
-		std::vector<Horse*> sorted_horses_ = horses_;
+		std::vector<Horse*> sorted_horses_;
 
 		// 경기종료 판단을 위한 변수
 		float checking_position_ = 0.0f;

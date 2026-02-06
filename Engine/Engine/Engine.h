@@ -1,26 +1,31 @@
-#pragma once
+ï»¿#pragma once
 
-#include"Common/Common.h"
+#include "Common/Common.h"
+#include "Common/RTTI.h"
+#include "Math/Vector2.h"
+#include <Windows.h>
+
 namespace Mint
 {
-	// Àü¹æ ¼±¾ğ!!
+	// ì „ë°© ì„ ì–¸!!
 	class Input;
 
 	class Renderer;
 
 	// Main game engine class.
-	class MINT_API Engine
+	class MINT_API Engine : public RTTI
 	{
-		// ¿£Áø ¼³Á¤ ±¸Á¶Ã¼
+		RTTI_DECLARATIONS(Engine, RTTI)
+		// ì—”ì§„ ì„¤ì • êµ¬ì¡°ì²´
 		struct EngineSetting
 		{
-			// ÇÁ·¹ÀÓ ¼Óµµ ÁöÁ¤
+			// í”„ë ˆì„ ì†ë„ ì§€ì •
 			float framerate = 0.0f;
 
-			// È­¸é ³Êºñ
+			// í™”ë©´ ë„ˆë¹„
 			int width = 0;
 
-			// È­¸é ³ôÀÌ
+			// í™”ë©´ ë†’ì´
 			int height = 0;
 		};
 
@@ -28,52 +33,57 @@ namespace Mint
 		Engine();
 		virtual ~Engine();
 
-		// ¿£Áø ·çÇÁ(°ÔÀÓ ·çÇÁ)
+		// ì—”ì§„ ë£¨í”„(ê²Œì„ ë£¨í”„)
 		void Run();
 		
-		// ¿£Áø Á¾·á ÇÔ¼ö
+		// ì—”ì§„ ì¢…ë£Œ í•¨ìˆ˜
 		void QuitEngine();
 
-		// »õ ·¹º§À» Ãß°¡(¼³Á¤)ÇÏ´Â ÇÔ¼ö
+		// ìƒˆ ë ˆë²¨ì„ ì¶”ê°€(ì„¤ì •)í•˜ëŠ” í•¨ìˆ˜
 		void SetNewLevel(class Level* newLevel);
 
-		// Àü¿ªº¯¼ö Á¢±Ù ÇÔ¼ö
+		// ì „ì—­ë³€ìˆ˜ ì ‘ê·¼ í•¨ìˆ˜
 		static Engine& Get();
 
 	protected:
 
-		// Á¤¸® ÇÔ¼ö
+		void Clear(CHAR_INFO* buffer, int width, int height);
+
+		// ì •ë¦¬ í•¨ìˆ˜
 		void Shutdown();
 
-		// ¼³Á¤ ÆÄÀÏ ·Îµå ÇÔ¼ö
+		// ì„¤ì • íŒŒì¼ ë¡œë“œ í•¨ìˆ˜
 		void LoadSetting();
 
-		// °ÔÀÓ ÇÃ·¹ÀÌ ½ÃÀÛÇÔ¼ö
-		// Unreal¿¡¼­´Â BeginPlay, Unity¿¡¼­´Â Start/Awake ÀÌ´Ù.
-		void BeginPlay();
+		// ê²Œì„ í”Œë ˆì´ ì‹œì‘í•¨ìˆ˜
+		// Unrealì—ì„œëŠ” BeginPlay, Unityì—ì„œëŠ” Start/Awake ì´ë‹¤.
+		virtual void BeginPlay();
 
-		// ¾÷µ¥ÀÌÆ® ÇÔ¼ö.
-		void Tick(float deltaTime);
+		// ì—…ë°ì´íŠ¸ í•¨ìˆ˜.
+		virtual void Tick(float deltaTime);
 
-		// ±×¸®±â ÇÔ¼ö. (Draw/Render).
-		void Draw();
+		// ê·¸ë¦¬ê¸° í•¨ìˆ˜. (Draw/Render).
+		virtual void Draw();
 
-		// ¿£Áø Á¾·á ÇÃ·¡±×
+		// ì—”ì§„ ì¢…ë£Œ í”Œë˜ê·¸
 		bool isQuit = false;
 
-		// ¿£Áø ¼³Á¤ °ª
+		// ì—”ì§„ ì„¤ì • ê°’
 		EngineSetting setting;
 
-		// ÀÔ·Â °ü¸®ÀÚ
+		// ì…ë ¥ ê´€ë¦¬ì
 		Input* input = nullptr;
 
-		// ·»´õ·¯ °´Ã¼
+		// ë Œë”ëŸ¬ ê°ì²´
 		Renderer* renderer = nullptr;
 
-		// ¸ŞÀÎ ·¹º§
+		// ì´ˆê¸°í™” ì‹œ ê°€ë¡œì™€ ì„¸ë¡œ ê¸¸ì´ë¥¼ ì €ì¥í•´ì•¼í•œë‹¤
+		Vector2 screen_size_;
+
+		// ë©”ì¸ ë ˆë²¨
 		class Level* mainLevel = nullptr;
 
-		// Àü¿ª º¯¼ö
+		// ì „ì—­ ë³€ìˆ˜
 		static Engine* instance;
 	};
 }

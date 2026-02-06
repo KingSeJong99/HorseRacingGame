@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include"Math/Vector2.h"
 #include"Math/Color.h"
@@ -7,134 +7,92 @@
 
 namespace Mint
 {
-	// ÄÜ¼Ö ¹öÆÛ¸¦ °ü¸®ÇÏ´Â Å¬·¡½º
+	// ì½˜ì†” ë²„í¼ë¥¼ ê´€ë¦¬í•˜ëŠ” í´ë˜ìŠ¤
 	class ScreenBuffer;
 
-	// DLL ³»ºÎ¿¡¼­¸¸ »ç¿ëÇÏµµ·Ï ÇÑ´Ù
-	// ´õºí ¹öÆÛ¸µÀ» Áö¿øÇÏ´Â ·»´õ·¯ Å¬·¡½º!
+	// DLL ë‚´ë¶€ì—ì„œë§Œ ì‚¬ìš©í•˜ë„ë¡ í•œë‹¤
+	// ë”ë¸” ë²„í¼ë§ì„ ì§€ì›í•˜ëŠ” ë Œë”ëŸ¬ í´ë˜ìŠ¤!
 	class MINT_API Renderer
 	{
 	public:
 		Renderer(const Vector2& screenSize);
 		~Renderer();
 
-		// ½Ì±ÛÅæ Á¢±Ù ÇÔ¼ö
+		// ì‹±ê¸€í†¤ ì ‘ê·¼ í•¨ìˆ˜
 		static Renderer& Get();
 
-		// ±×¸®±â ÇÔ¼ö
+		// ê·¸ë¦¬ê¸° í•¨ìˆ˜
 		void Draw();
 
-		// ±×¸®´Âµ¥ ÇÊ¿äÇÑ µ¥ÀÌÅÍ¸¦ Á¦ÃâÇÏ´Â ÇÔ¼ö
+		// ê·¸ë¦¬ëŠ”ë° í•„ìš”í•œ ë°ì´í„°ë¥¼ ì œì¶œí•˜ëŠ” í•¨ìˆ˜
 		void Submit(
 			const char* text,
 			const Vector2& position,
 			Color color = Color::White,
 			int sortingOrder = 0);
 
+		// í˜„ì¬ ì‚¬ìš©í•  ë²„í¼ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜(Getter)
+		ScreenBuffer* GetCurrentBuffer();
+		
+		inline CHAR_INFO* GetFrameBuffer() const { return frame->charInfoArray; }
+
+		// ë”ë¸” ë²„í¼ë§ì„ í™œìš©í•´ í™œì„±í™” ë²„í¼ë¥¼ êµí™˜í•˜ëŠ” í•¨ìˆ˜
+		void Present();
+
+		// í™”ë©´ì„ ì§€ìš°ëŠ” í•¨ìˆ˜
+		void Clear();
+
 	private:
-		// ÇÁ·¹ÀÓ ±¸Á¶Ã¼ - 2Â÷¿ø ±ÛÀÚ ¹è¿­ÀÇ Ç×¸ñÀÌ µÉ ±¸Á¶Ã¼ÀÓ
+		// í”„ë ˆì„ êµ¬ì¡°ì²´ - 2ì°¨ì› ê¸€ì ë°°ì—´ì˜ í•­ëª©ì´ ë  êµ¬ì¡°ì²´ì„
 		struct Frame
 		{
 			Frame(int bufferCount);
 			~Frame();
 
-			// Áö¿ì±â ÇÔ¼ö
+			// ì§€ìš°ê¸° í•¨ìˆ˜
 			void Clear(const Vector2& screenSize);
 
-			// ±ÛÀÚ °ª°ú ±ÛÀÚÀÇ »ö»óÀ» °®´Â Å¸ÀÔ
+			// ê¸€ì ê°’ê³¼ ê¸€ìì˜ ìƒ‰ìƒì„ ê°–ëŠ” íƒ€ì…
 			CHAR_INFO* charInfoArray = nullptr;
 
-			// ±×¸®±â ¿ì¼± ¼øÀ§ ¹è¿­
+			// ê·¸ë¦¬ê¸° ìš°ì„  ìˆœìœ„ ë°°ì—´
 			int* sortingOrderArray = nullptr;
 		};
 
 
-		// ·»´õ¸µÇÒ µ¥ÀÌÅÍ
+		// ë Œë”ë§í•  ë°ì´í„°
 		struct RenderCommand
 		{
-			// È­¸é¿¡ º¸¿©ÁÙ ¹®ÀÚ¿­ °ª
+			// í™”ë©´ì— ë³´ì—¬ì¤„ ë¬¸ìì—´ ê°’
 			const char* text = nullptr;
 
-			// ÁÂÇ¥
+			// ì¢Œí‘œ
 			Vector2 position;
 
-			// »ö»ó
+			// ìƒ‰ìƒ
 			Color color = Color::White;
 
-			// ±×¸®±â ¿ì¼±¼øÀ§
+			// ê·¸ë¦¬ê¸° ìš°ì„ ìˆœìœ„
 			int sortingOrder = 0;
 		};
 
-		// È­¸éÀ» Áö¿ì´Â ÇÔ¼ö
-		void Clear();
 
-		// ´õºí ¹öÆÛ¸µÀ» È°¿ëÇØ È°¼ºÈ­ ¹öÆÛ¸¦ ±³È¯ÇÏ´Â ÇÔ¼ö
-		void Present();
-
-		// ÇöÀç »ç¿ëÇÒ ¹öÆÛ¸¦ ¹İÈ¯ÇÏ´Â ÇÔ¼ö(Getter)
-		ScreenBuffer* GetCurrentBuffer();
-
-		// È­¸é Å©±â
+		// í™”ë©´ í¬ê¸°
 		Vector2 screenSize;
 
-		// °ü¸®ÇÒ ÇÁ·¹ÀÓ °´Ã¼
+		// ê´€ë¦¬í•  í”„ë ˆì„ ê°ì²´
 		Frame* frame = nullptr;
 
-		// ÀÌÁß ¹öÆÛ ¹è¿­
+		// ì´ì¤‘ ë²„í¼ ë°°ì—´
 		ScreenBuffer* screenBuffers[2] = {};
 
-		// ÇöÀç È°¼ºÈ­µÈ ¹öÆÛ ÀÎµ¦½º
+		// í˜„ì¬ í™œì„±í™”ëœ ë²„í¼ ì¸ë±ìŠ¤
 		int currentBufferIndex = 0;
 
-		// ·»´õ Å¥ (¾ÀÀÇ ¸ğµç ±×¸®±â ¸í·ÉÀ» ¸ğ¾ÆµÎ´Â ¹è¿­)
+		// ë Œë” í (ì”¬ì˜ ëª¨ë“  ê·¸ë¦¬ê¸° ëª…ë ¹ì„ ëª¨ì•„ë‘ëŠ” ë°°ì—´)
 		std::vector<RenderCommand> renderQueue;
 
-		// ½Ì±ÛÅæ ±¸ÇöÀ» À§ÇÑ Á¤Àû º¯¼ö
+		// ì‹±ê¸€í†¤ êµ¬í˜„ì„ ìœ„í•œ ì •ì  ë³€ìˆ˜
 		static Renderer* instance;
 	};
 }
-	
-
-
-
-
-
-
-
-
-
-
-
-		//
-		// 260202 screenbuffer »ı±è¿¡ µû¶ó »èÁ¦, ¸®ºä ÈÄ Á¦°Å
-		// °£´ÜÇÑ ±×¸®±â ÇÔ¼ö
-	// 	static void Draw(const char image)
-	// 	{
-	// 		std::cout << image;
-	// 	}
-	// 
-	// 	// À§Ä¡ ¼³Á¤ ¹× ±×¸®±â ÇÑ ¹ø¿¡ Ã³¸®ÇÏ´Â ÇÔ¼ö
-	// 	static void Draw(const Vector2& position, const char image)
-	// 	{
-	// 		Util::SetConsolePosition(position);
-	// 		Draw(image);
-	// 	}
-	// 
-	// 	// À§Ä¡, »ö»ó ¼³Á¤ ¹× ±×¸®±â
-	// 	static void Draw(
-	// 		const Vector2& position,
-	// 		Color color,
-	// 		const char image)
-	// 	{
-	// 		// Ä¿¼­ À§Ä¡ ¼³Á¤
-	// 		Util::SetConsolePosition(position);
-	// 
-	// 		// ÅØ½ºÆ® »ö»ó ¼³Á¤
-	// 		Util::SetConsoleTextColor(color);
-	// 
-	// 		// ±ÛÀÚ¸¦ Ãâ·ÂÇÑ´Ù
-	// 		Draw(image);
-	// 
-	// 		// ¿ø·¡ »ö»óÀ¸·Î µÇµ¹¸°´Ù
-	// 		Util::SetConsoleTextColor(Color::White);
-	// 	}

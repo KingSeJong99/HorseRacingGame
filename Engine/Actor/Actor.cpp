@@ -1,4 +1,4 @@
-#include"Actor.h"
+ï»¿#include"Actor.h"
 #include"Util/Util.h"
 #include"Render/Renderer.h"
 
@@ -13,20 +13,20 @@ namespace Mint
 		Color color)
 		: position(position), color(color)
 	{
-		// ¹®ÀÚ¿­ º¹»çÇÏ±â
+		// ë¬¸ìì—´ ë³µì‚¬í•˜ê¸°
 		size_t length = strlen(image) + 1;
 		this->image = new char[length];
 		strcpy_s(this->image, length, image);
 	}
 	Actor::~Actor()
 	{
-		// ¸Ş¸ğ¸® ÇØÁ¦ÇÏ±â
+		// ë©”ëª¨ë¦¬ í•´ì œí•˜ê¸°
 		SafeDeleteArray(image); 
 	}
 
 	void Actor::BeginPlay()
 	{
-		// ÀÌº¥Æ®¸¦ ¹ŞÀº ÈÄ¿¡´Â ÇÃ·¡±×¸¦ ¼³Á¤ÇÑ´Ù
+		// ì´ë²¤íŠ¸ë¥¼ ë°›ì€ í›„ì—ëŠ” í”Œë˜ê·¸ë¥¼ ì„¤ì •í•œë‹¤
 		hasBeganPlay = true;
 	}
 
@@ -35,51 +35,31 @@ namespace Mint
 
 	}
 
-	void Actor::Draw()
+	void Actor::Draw(CHAR_INFO* backBuffer, int width, int height)
 	{
-		// ·»´õ·¯¿¡ ±×¸®±â¸¦ ¿äÃ»ÇÑ´Ù
-		// Renderer::Draw(position, color, image);
+		int x = static_cast<int>(position.x);
+		int y = static_cast<int>(position.y);
 
-		// ·»´õ·¯¿¡ µ¥ÀÌÅÍ¸¦ Á¦ÃâÇÑ´Ù
-		Renderer::Get().Submit(image, position, color, sortingOrder);
+		// ì¢Œí‘œê°’ì´ ì˜ëª»ë˜ì—ˆëŠ”ì§€ í™•ì¸
+		if (((x < 0) || (x >= width)) 
+			|| ((y < 0) >= (height))) return;
+
+		// ì €ì¥ë˜ì–´ì•¼ í•  ê³³
+		int index = y * width + x;
+
+		backBuffer[index].Char.AsciiChar = image[0];
+		backBuffer[index].Attributes = static_cast<WORD>(color);
+
 	}
 
-	// ÇÁ·¹ÀÓ¸¶´Ù È£ÃâÇÏ±â¿¡´Â ¹«¸®°¡ ÀÖ´Ù
+	// í”„ë ˆì„ë§ˆë‹¤ í˜¸ì¶œí•˜ê¸°ì—ëŠ” ë¬´ë¦¬ê°€ ìˆë‹¤
 	void Actor::SetPosition(const Vector2& newPosition)
 	{
-		// ·»´õ·¯¿¡ ºóÄ­ ±×¸®±â¸¦ ¿äÃ»ÇÑ´Ù
-		// Renderer::Draw(position, ' ');
-
-		// º¯°æÇÏ·Á´Â À§Ä¡°¡ ÇöÀç À§Ä¡¿Í °°À¸¸é °Ç³Ê¶Ú´Ù
+		// ë³€ê²½í•˜ë ¤ëŠ” ìœ„ì¹˜ê°€ í˜„ì¬ ìœ„ì¹˜ì™€ ê°™ìœ¼ë©´ ê±´ë„ˆë›´ë‹¤
 		if (position == newPosition)
 		{
 			return;
 		}
-
-
-
-
-
-		// ¾×ÅÍÀÇ ÁÂÇ¥·Î ÄÜ¼Ö¿¡¼­ÀÇ ÁÂÇ¥ À§Ä¡¸¦ ÀÌµ¿ÇÑ´Ù
-		// ¾×ÅÍÀÇ ÇöÀç ÁÂÇ¥·Î ÄÜ¼Ö¿¡¼­ÀÇ ÁÂÇ¥¸¦ ÀÌµ¿ÇÑ´Ù
-						
-		// ÄÚµå¸®ºä ÈÄ »èÁ¦ÇÑ´Ù
-		// COORD coord = {};
-		// coord.X = static_cast<short>(position.x);
-		// coord.Y = static_cast<short>(position.y);
-		// 
-		// SetConsoleCursorPosition(
-		// 	GetStdHandle(STD_OUTPUT_HANDLE),
-		// 	coord
-		// );
-		
-		// ÄÚµå¸®ºä ÈÄ »èÁ¦ÇÑ´Ù
-		// Util::SetConsolePosition(position);
-
-		// ÇØ´ç À§Ä¡ÀÇ ±ÛÀÚ °ªÀ» Áö¿ì±â(ºóÄ­ ±×¸®±â)
-		// std::cout << ' ';
-
-		// »õ·Î¿î À§Ä¡ ¼³Á¤
 		position = newPosition;
 	}
 }

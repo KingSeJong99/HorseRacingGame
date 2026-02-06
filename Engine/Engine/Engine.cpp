@@ -1,4 +1,4 @@
-#include"Engine.h"
+ï»¿#include"Engine.h"
 #include"Level/Level.h"
 #include"Core/Input.h"
 #include"Util/Util.h"
@@ -14,95 +14,95 @@ namespace Mint
 	{
 		instance = this;
 
-		// ÀÔ·Â °ü¸®ÀÚ »ı¼º
+		// ì…ë ¥ ê´€ë¦¬ì ìƒì„±
 		input = new Input();
 
-		// ¼³Á¤ ÆÄÀÏ ·Îµå
+		// ì„¤ì • íŒŒì¼ ë¡œë“œ
 		LoadSetting();
 
-		// ·»´õ·¯ °´Ã¼ »ı¼ºÇÏ±â
+		// ë Œë”ëŸ¬ ê°ì²´ ìƒì„±í•˜ê¸°
 		renderer = new Renderer(Vector2(setting.width, setting.height));
 
-		// Ä¿¼­¸¦ ²ö´Ù
+		// ì»¤ì„œë¥¼ ëˆë‹¤
 		Util::TurnOffCursor();
 	}
 
 	Engine::~Engine()
 	{
-		// ¸ŞÀÎ ·¹º§À» Á¦°ÅÇÑ´Ù
+		// ë©”ì¸ ë ˆë²¨ì„ ì œê±°í•œë‹¤
 		if (mainLevel)
 		{
 			delete mainLevel;
 			mainLevel = nullptr;
 		}
 
-		// ÀÔ·Â °ü¸®ÀÚ Á¦°Å
+		// ì…ë ¥ ê´€ë¦¬ì ì œê±°
 		if (input)
 		{
 			delete input;
 			input = nullptr;
 		}
 
-		// ·»´õ·¯ °´Ã¼ Á¦°ÅÇÏ±â
+		// ë Œë”ëŸ¬ ê°ì²´ ì œê±°í•˜ê¸°
 		SafeDelete(renderer);
 	}
 
 	void Engine::Run()
 	{
-		// cpuÀÇ ÁÖÆÄ¼ö·Î ÃÊ¸¦ ±¸ÇÏ±â.
+		// cpuì˜ ì£¼íŒŒìˆ˜ë¡œ ì´ˆë¥¼ êµ¬í•˜ê¸°.
 		LARGE_INTEGER frequency;
 		QueryPerformanceFrequency(&frequency);
 
-		// ÇÁ·¹ÀÓ °è»ê¿ë º¯¼ö
+		// í”„ë ˆì„ ê³„ì‚°ìš© ë³€ìˆ˜
 		int64_t currentTime = 0;
 		int64_t previousTime = 0;
 
-		// ÇÏµå¿ş¾î Å¸ÀÌ¸Ó·Î ½Ã°£ ±¸ÇÏ±â
+		// í•˜ë“œì›¨ì–´ íƒ€ì´ë¨¸ë¡œ ì‹œê°„ êµ¬í•˜ê¸°
 		LARGE_INTEGER time;
 		QueryPerformanceCounter(&time);
 
-		// ¿£Áø ½ÃÀÛ Á÷ÀüÀÌ¹Ç·Î µÎ ½Ã°£ °ªÀº µ¿ÀÏÇÏ°Ô ÃÊ±âÈ­µÇ¾îÀÖ´Ù
+		// ì—”ì§„ ì‹œì‘ ì§ì „ì´ë¯€ë¡œ ë‘ ì‹œê°„ ê°’ì€ ë™ì¼í•˜ê²Œ ì´ˆê¸°í™”ë˜ì–´ìˆë‹¤
 		currentTime = time.QuadPart;
 		previousTime = currentTime;
 
-		// ±âÁØ ÇÁ·¹ÀÓ(´ÜÀ§¸¦ ÃÊ·Î)
+		// ê¸°ì¤€ í”„ë ˆì„(ë‹¨ìœ„ë¥¼ ì´ˆë¡œ)
 		// float targetFrameRate = 15.0f;
 
 		setting.framerate
 			= setting.framerate == 0.0f ? 60.f : setting.framerate;
 		float oneFrameTime = 1.0f / setting.framerate;
 
-		// ¿£Áø ·çÇÁ(°ÔÀÓ·çÇÁ)
+		// ì—”ì§„ ë£¨í”„(ê²Œì„ë£¨í”„)
 		while (!isQuit)
 		{
-			// ÇöÀç ½Ã°£ ±¸ÇÏ±â
+			// í˜„ì¬ ì‹œê°„ êµ¬í•˜ê¸°
 			QueryPerformanceCounter(&time);
 			currentTime = time.QuadPart;
 
-			// ÇÁ·¹ÀÓ ½Ã°£ °è»ê
+			// í”„ë ˆì„ ì‹œê°„ ê³„ì‚°
 			float deltaTime
 				= static_cast<float>(currentTime - previousTime);
 
 			deltaTime = deltaTime
 				/ static_cast<float>(frequency.QuadPart);
 
-			// °íÁ¤ ÇÁ·¹ÀÓ ±â¹ı
+			// ê³ ì • í”„ë ˆì„ ê¸°ë²•
 			if (deltaTime >= oneFrameTime)
 			{
 				input->ProcessInput();
 
-				// ÇÁ·¹ÀÓ Ã³¸® !!
+				// í”„ë ˆì„ ì²˜ë¦¬ !!
 				// Tick(1.0f / 60.0f);
 				BeginPlay();
 				Tick(deltaTime);
 				Draw();
 
-				// ÀÌÀü ½Ã°£ °ª °»½ÅÇÏ±â
+				// ì´ì „ ì‹œê°„ ê°’ ê°±ì‹ í•˜ê¸°
 				previousTime = currentTime;
 
 				input->SavePreviousInputStates();
 
-				// ·¹º§¿¡ ¿äÃ»µÈ Ãß°¡ ¹× Á¦°Å¸¦ Ã³¸®ÇÑ´Ù
+				// ë ˆë²¨ì— ìš”ì²­ëœ ì¶”ê°€ ë° ì œê±°ë¥¼ ì²˜ë¦¬í•œë‹¤
 				if (mainLevel)
 				{
 					mainLevel->ProcessAddAndDestroyActors();
@@ -110,7 +110,7 @@ namespace Mint
 			}
 		}
 
-		// Á¤¸®
+		// ì •ë¦¬
 		Shutdown();
 	}
 
@@ -121,47 +121,57 @@ namespace Mint
 
 	void Engine::SetNewLevel(Level* newLevel)
 	{
-		// ±âÁ¸ÀÇ LevelÀÌ ÀÖ´ÂÁö È®ÀÎÇÑ´Ù
-		// ÀÖÀ¸¸é ±âÁ¸ÀÇ LevelÀ» Á¦°ÅÇÑ´Ù
-		// ¿ø·¡´Â ÀüÈ¯½Ã ¹Ù·Î ÀüÈ¯ÇÏ¸é ¾ÈµÈ´Ù
-		// TODO : ÀÓ½ÃÄÚµå
+		// ê¸°ì¡´ì˜ Levelì´ ìˆëŠ”ì§€ í™•ì¸í•œë‹¤
+		// ìˆìœ¼ë©´ ê¸°ì¡´ì˜ Levelì„ ì œê±°í•œë‹¤
+		// ì›ë˜ëŠ” ì „í™˜ì‹œ ë°”ë¡œ ì „í™˜í•˜ë©´ ì•ˆëœë‹¤
+		// TODO : ì„ì‹œì½”ë“œ
 		if (mainLevel)
 		{
 			delete mainLevel;
 			mainLevel = nullptr;
 		}
 
-		// ·¹º§ ¼³Á¤
+		// ë ˆë²¨ ì„¤ì •
 		mainLevel = newLevel;
 	}
 
 	Engine& Engine::Get() 
 	{
-		// ¿¹¿ÜÃ³¸®
+		// ì˜ˆì™¸ì²˜ë¦¬
 		if (!instance)
 		{
 			std::cout << "Error: Engine::Get(). instance is null\n";
-			__debugbreak;
+			__debugbreak();
 		}
 		return *instance;
 	}
 
+	void Engine::Clear(CHAR_INFO* buffer, int width, int height)
+	{
+		int total_size = width * height;
+		for (int i = 0; i < total_size; ++i)
+		{
+			buffer[i].Char.AsciiChar = ' ';
+			buffer[i].Attributes = static_cast<int>(Color::White);
+		}
+	}
+
 	void Engine::Shutdown()
 	{
-		// Á¤¸® ÀÛ¾÷
-		std::cout << "¿£ÁøÀÌ Á×°í ¸»¾Ò´Ù....\n";
+		// ì •ë¦¬ ì‘ì—…
+		std::cout << "ì—”ì§„ì´ ì£½ê³  ë§ì•˜ë‹¤....\n";
 
-		// ²¨Áø Ä¿¼­¸¦ Å²´Ù
+		// êº¼ì§„ ì»¤ì„œë¥¼ í‚¨ë‹¤
 		Util::TurnOnCursor();
 	}
 
 	void Engine::LoadSetting()
 	{
-		// ¿£ÁøÀ» ¼³Á¤ÇÏ´Â ÆÄÀÏ ¿­±â
+		// ì—”ì§„ì„ ì„¤ì •í•˜ëŠ” íŒŒì¼ ì—´ê¸°
 		FILE* file = nullptr;
 		fopen_s(&file, "../Config/Setting.txt", "rt");
 		
-		// ÆÄÀÏÀ» Ã£Áö ¸øÇßÀ» ¶§ ¿¹¿ÜÃ³¸®ÇÏ±â
+		// íŒŒì¼ì„ ì°¾ì§€ ëª»í–ˆì„ ë•Œ ì˜ˆì™¸ì²˜ë¦¬í•˜ê¸°
 		if (!file)
 		{
 			std::cout << "Failed to open engine setting file.\n";
@@ -172,26 +182,26 @@ namespace Mint
 
 		char buffer[2048] = {};
 		
-		// ÆÄÀÏ¿¡¼­ ÀĞ±â.
+		// íŒŒì¼ì—ì„œ ì½ê¸°.
 		size_t readSize = 
 			fread(buffer, sizeof(char), 2048, file);
 		
-		// ¹®ÀÚ¿­ ÀÚ¸£±â (ÆÄ½Ì)
-		// Ã¹ ¹øÂ° ¹®ÀÚ¿­À» ºĞ¸®ÇÒ ¶§´Â Ã¹ ÆÄ¶ó¹ÌÅÍ¸¦ Àü´ŞÇÑ´Ù
+		// ë¬¸ìì—´ ìë¥´ê¸° (íŒŒì‹±)
+		// ì²« ë²ˆì§¸ ë¬¸ìì—´ì„ ë¶„ë¦¬í•  ë•ŒëŠ” ì²« íŒŒë¼ë¯¸í„°ë¥¼ ì „ë‹¬í•œë‹¤
 		char* context = nullptr;
 		char* token = nullptr;
 		token = strtok_s(buffer, "\n", &context);
 
-		// ¹İº¹ÇØ¼­ ÀÚ¸£±â
+		// ë°˜ë³µí•´ì„œ ìë¥´ê¸°
 		while (token)
 		{
-			// ¼³Á¤ ÅØ½ºÆ®¿¡¼­ ÆÄ¶ó¹ÌÅÍ ÀÌ¸§¸¸ ÀĞ±â
+			// ì„¤ì • í…ìŠ¤íŠ¸ì—ì„œ íŒŒë¼ë¯¸í„° ì´ë¦„ë§Œ ì½ê¸°
 			char header[10] = {};
-			// ¹®ÀÚ¿­ ÀĞ±â ÇÔ¼ö È°¿ëÇÏ±â
-			// ÀÌ¶§ "%s"·Î ÀĞÀ¸¸é "½ºÆäÀÌ½º°¡ ÀÖÀ¸¸é °Å±â±îÁö ÀĞÀ½"
+			// ë¬¸ìì—´ ì½ê¸° í•¨ìˆ˜ í™œìš©í•˜ê¸°
+			// ì´ë•Œ "%s"ë¡œ ì½ìœ¼ë©´ "ìŠ¤í˜ì´ìŠ¤ê°€ ìˆìœ¼ë©´ ê±°ê¸°ê¹Œì§€ ì½ìŒ"
 			sscanf_s(token, "%s", header, 10);
 
-			// ¹®ÀÚ¿­ ºñ±³ ¹× °ª ÀĞ±â
+			// ë¬¸ìì—´ ë¹„êµ ë° ê°’ ì½ê¸°
 			if (strcmp(header, "framerate") == 0)
 			{
 				sscanf_s(token, "framerate = %f", &setting.framerate);
@@ -205,19 +215,19 @@ namespace Mint
 				sscanf_s(token, "height = %d", &setting.height);
 			}
 
-			// °³Çà ¹®ÀÚ·Î ¹®ÀÚ¿­ ºĞ¸®
+			// ê°œí–‰ ë¬¸ìë¡œ ë¬¸ìì—´ ë¶„ë¦¬
 			token = strtok_s(nullptr, "\n", &context);
 		}
 
-		// ¹®ÀÚ¿­ Æ÷¸Ë È°¿ëÇØ¼­ µ¥ÀÌÅÍ ÃßÃâÇÏ±â
+		// ë¬¸ìì—´ í¬ë§· í™œìš©í•´ì„œ ë°ì´í„° ì¶”ì¶œí•˜ê¸°
 		// sscanf_s(buffer, "framerate = %f", &setting.framerate);
-		// ÆÄÀÏÀ» ´İ´Â´Ù
+		// íŒŒì¼ì„ ë‹«ëŠ”ë‹¤
 		fclose(file);
 	}
 
 	void Engine::BeginPlay()
 	{
-		// LevelÀÌ Á¸ÀçÇÑ´Ù¸é ÀÌº¥Æ®¸¦ Àü´Ş
+		// Levelì´ ì¡´ì¬í•œë‹¤ë©´ ì´ë²¤íŠ¸ë¥¼ ì „ë‹¬
 		if (!mainLevel)
 		{
 			std::cout << "mainLevel is empty.\n";
@@ -232,8 +242,8 @@ namespace Mint
 		// 	<< "DeltaTime: " << deltaTime
 		// 	<< ", FPS: " << (1.0f / deltaTime) << "\n";
 
-		// Level¿¡ Event º¸³»±â
-		// ¿¹¿ÜÃ³¸®ÀÓ
+		// Levelì— Event ë³´ë‚´ê¸°
+		// ì˜ˆì™¸ì²˜ë¦¬ì„
 		if (!mainLevel)
 		{
 			std::cout << "Error: Engine::Tick(). mainLevel is empty\n";
@@ -245,17 +255,24 @@ namespace Mint
 
 	void Engine::Draw()
 	{
-		// ·¹º§¿¡ ÀÌº¥Æ® Èê¸®±â
-		// ¿¹¿ÜÃ³¸®ÇÏ±â
+		// ë ˆë²¨ì— ì´ë²¤íŠ¸ í˜ë¦¬ê¸°
+		// ì˜ˆì™¸ì²˜ë¦¬í•˜ê¸°
 		if (!mainLevel)
 		{
 			std::cout << "Error: Engine::Draw(). mainLevel is empty\n";
 			return;
 		}
-		// ·¹º§ÀÇ ¸ğµç ¾×ÅÍ°¡ ·»´õ µ¥ÀÌÅÍ¸¦ Á¦ÃâÇÑ´Ù
-		mainLevel->Draw();
 
-		// ·»´õ·¯¿¡ ±×¸®±â ¸í·ÉÀ» Àü´ŞÇÑ´Ù
-		renderer->Draw();
+		CHAR_INFO* back_buffer = renderer->GetFrameBuffer();
+		if (back_buffer == nullptr) return;
+
+		// í™”ë©´ ë¹„ìš°ê¸°
+		Clear(back_buffer, (int)screen_size_.x, (int)screen_size_.y);
+
+		// ë ˆë²¨ì—ê²Œ ê·¸ë¦¬ê¸°ë¥¼ ëª…ë ¹í•œë‹¤
+		mainLevel->Draw(back_buffer, (int)screen_size_.x, (int)screen_size_.y);
+
+		// í™”ë©´ êµì²´í•˜ê¸°
+		renderer->Present();
 	}
 }

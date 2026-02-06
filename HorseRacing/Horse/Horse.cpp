@@ -1,9 +1,11 @@
 ﻿#include "Horse.h"
 
 // 이미 저장되어 있는 이름을 덮어쓰기보다 가져온다!
-// Todo: 생성자 변경으로 인한 로직 수정 필요함
+// std::move 기능을 사용하거나 하는등의 이유로 name도 하나의 파일에서 불러오지만,
+// 매개변수를 무조건 합치는 것은 좋지 않다
 horseracing::Horse::Horse(const HorseStats& stats, std::string name)
-	: name_(std::move(name)),
+	: stats_(stats),
+	name_(std::move(name)),
 	current_speed_(0.0f),
 	is_racing_(false) {
 
@@ -18,14 +20,17 @@ void horseracing::Horse::Run(float delta_time, float track_width) {
 	CalculatePhysics(delta_time, track_width);
 }
 
-void horseracing::Horse::SetRank(int changed_rank)
-{
+void horseracing::Horse::SetRank(int changed_rank) {
 	race_data_.current_rank = changed_rank;
 }
 
+// 출전시키기
+void horseracing::Horse::SetLane(int lane_index) {
+	race_data_.lane_index = lane_index;
+}
+
 // 말의 상태를 초기화해 경기에 참가할 수 있도록 한다
-void horseracing::Horse::Reset()
-{
+void horseracing::Horse::Reset() {
 	current_speed_ = 0.0f;
 	is_racing_ = true;
 

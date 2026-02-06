@@ -1,5 +1,7 @@
-#include"Level.h"
+ï»¿#include"Level.h"
 #include"Actor/Actor.h"
+#include <algorithm>
+#include <Windows.h>
 
 namespace Mint
 {
@@ -9,10 +11,10 @@ namespace Mint
 
 	Level::~Level()
 	{
-		// ¸Ş¸ğ¸® Á¤¸®ÇÏ±â
+		// ë©”ëª¨ë¦¬ ì •ë¦¬í•˜ê¸°
 		for (Actor*& actor : actors)
 		{
-			// Actor °´Ã¼ÀÇ ¸Ş¸ğ¸®¸¦ ÇØÁ¦ÇÑ´Ù
+			// Actor ê°ì²´ì˜ ë©”ëª¨ë¦¬ë¥¼ í•´ì œí•œë‹¤
 			if (actor)
 			{
 				delete actor;
@@ -20,16 +22,16 @@ namespace Mint
 			}
 		}
 
-		// ¹è¿­ ÃÊ±âÈ­ÇÏ±â
+		// ë°°ì—´ ì´ˆê¸°í™”í•˜ê¸°
 		actors.clear();
 	}
 
 	void Level::BeginPlay()
 	{
-		// Actor¿¡ Event¸¦ Èê¸®±â
+		// Actorì— Eventë¥¼ í˜ë¦¬ê¸°
 		for (Actor* actor : actors)
 		{
-			// ÀÌ¹Ì Beginplay°¡ È£ÃâµÈ ActorÀÇ °æ¿ì¿¡´Â °Ç³Ê¶Ù¾î¾ßÇÔ
+			// ì´ë¯¸ Beginplayê°€ í˜¸ì¶œëœ Actorì˜ ê²½ìš°ì—ëŠ” ê±´ë„ˆë›°ì–´ì•¼í•¨
 			if (actor->HasBeganPlay())
 			{
 				continue;
@@ -39,90 +41,65 @@ namespace Mint
 	}
 	void Level::Tick(float deltaTime)
 	{
-		// Actor¿¡ ÀÌº¥Æ®¸¦ Èê¸°´Ù
+		// Actorì— ì´ë²¤íŠ¸ë¥¼ í˜ë¦°ë‹¤
 		for (Actor* actor : actors)
 		{
 			actor->Tick(deltaTime);
 		}
 
 	}
-	void Level::Draw()
-	{
-		// Actor¿¡ ÀÌº¥Æ®¸¦ Èê¸°´Ù
+	void Level::Draw(CHAR_INFO* backBuffer, int width, int height) {
+		// 1. í™œì„±í™”ëœ ì•¡í„°ë§Œ ì¶”ë¦¬ê¸°
+		// ì¡´ì¬ë„ í•˜ê³ , í™œì„±ëœ ì•„ì´ë§Œ.
+		std::vector<Actor*> active_actors;
 		for (Actor* actor : actors)
 		{
-			// °°Àº À§Ä¡¿¡ ´Ù¸¥ ¾×ÅÍ°¡ ÀÖ´ÂÁö È®ÀÎÀ» ÇÑ´Ù
-			Actor* search = nullptr;
-			for (Actor* otherActor : actors)
+			if (actor && actor->IsActive())
 			{
-				// °°Àº ¾×ÅÍ´Â ºñ±³ÇÏÁö ¾Ê´Â´Ù
-				if (actor == otherActor)
-				{
-					continue;
-				}
-
-				// À§Ä¡ ºñ±³
-				if (actor->GetPosition() == otherActor->GetPosition())
-				{
-					// Á¤·Ä ¼ø¼­ ºñ±³
-					if (actor->GetSortingOrder()
-						< otherActor->GetSortingOrder())
-					{
-						search = otherActor;
-						break;
-					}
-				}
+				active_actors.push_back(actor);
 			}
-			
-			// °°Àº À§Ä¡¿¡ ¿ì¼± ¼øÀ§°¡ ³ôÀº ¾×ÅÍ°¡ ÀÖ´Ù¸é ±×¸®Áö ¾Ê´Â´Ù
-			if (search)
-			{
-				continue;
-			}
-
-			actor->Draw();
 		}
 
-		// ¾×ÅÍ¸¦ ¼øÈ¸ÇÏ¸ç Draw ÇÔ¼ö È£ÃâÇÏ±â
-		for (Actor* const actor : actors)
-		{
-			if (!actor->IsActive())
-			{
-				continue;
-			}
+		// 2. SortingOrderìœ¼ë¡œ ë‚®ì€ ìˆœì„œë¶€í„° ê·¸ë¦¬ë„ë¡ ì •ë ¬
+		std::sort(active_actors.begin(), active_actors.end(), [](Actor* a, Actor* b) {
+			return a->GetSortingOrder() < b->GetSortingOrder();
+			});
 
-			actor->Draw();
+		// 3. ì •ë ¬ëœ ìˆœì„œëŒ€ë¡œ ì•¡í„°ì˜ Draw í˜¸ì¶œ
+		for (auto* actor : active_actors)
+		{
+			actor->Draw(backBuffer, width, height);
 		}
 	}
 
 	void Level::AddNewActor(Actor* newActor)
 	{
-		// ÇÁ·¹ÀÓ Ã³¸®(°íÁ¤)¸¦ °í·ÁÇÏ¿© ³ªÁß¿¡ µû·Î Ãß°¡ÀûÀÎ ÀÛ¾÷À» ÇØ¾ßÇÔ
-		// push_backÀº ¸Å°³º¯¼ö¸¦ l-value·Î¼­ Ã³¸®¸¦ ÇÑ´Ù
+		// í”„ë ˆì„ ì²˜ë¦¬(ê³ ì •)ë¥¼ ê³ ë ¤í•˜ì—¬ ë‚˜ì¤‘ì— ë”°ë¡œ ì¶”ê°€ì ì¸ ì‘ì—…ì„ í•´ì•¼í•¨
+		// push_backì€ ë§¤ê°œë³€ìˆ˜ë¥¼ l-valueë¡œì„œ ì²˜ë¦¬ë¥¼ í•œë‹¤
 		// actors.push_back(newActor);
 		addRequestedActors.emplace_back(newActor);
 
-		// ¿À³Ê½± ¼³Á¤
+		// ì˜¤ë„ˆì‰½ ì„¤ì •
 		newActor->SetOwner(this);
 	}
 
 	void Level::ProcessAddAndDestroyActors()
 	{
-		// Á¦°Å Ã³¸®
+		// ì œê±° ì²˜ë¦¬
 		for (int ix = 0; ix < static_cast<int>(actors.size()); )
 		{
-			// Á¦°Å ¿äÃ»µÈ ¾×ÅÍ°¡ ÀÖ´ÂÁö È®ÀÎÇÑ´Ù
+			// ì œê±° ìš”ì²­ëœ ì•¡í„°ê°€ ìˆëŠ”ì§€ í™•ì¸í•œë‹¤
 			if (actors[ix]->DestroyRequested())
 			{
-				// Á¦°Å ¿äÃ»À» ÇÏ¿´À¸¹Ç·Î Á¦°Å¸¦ ÇÑ´Ù
+				// ì œê±° ìš”ì²­ì„ í•˜ì˜€ìœ¼ë¯€ë¡œ ì œê±°ë¥¼ í•œë‹¤
 				delete actors[ix];
-				actors.erase(actors.begin() + ix);			// ¹è¿­¿¡ ÀÖ´Â ÇØ´ç ¿ä¼Ò¸¦ ¾ø¾Ø´Ù(ÇÏ³ª¾¿)
+				actors.erase(actors.begin() + ix);			// ë°°ì—´ì— ìˆëŠ” í•´ë‹¹ ìš”ì†Œë¥¼ ì—†ì•¤ë‹¤(í•˜ë‚˜ì”©)
 				continue;
 			}
-			++ix;							// ÀÎµ¦½º °è»ê¿¡ ÁÖÀÇ!!
+			++ix;							// ì¸ë±ìŠ¤ ê³„ì‚°ì— ì£¼ì˜!!
 		}
 
-		// Ãß°¡ Ã³¸®
+		// ì¶”ê°€ ì²˜ë¦¬
 		if (addRequestedActors.size() == 0)
 		{
 			return;
@@ -133,8 +110,8 @@ namespace Mint
 			actors.emplace_back(actor);
 		}
 
-		// Ã³¸®°¡ ³¡³µÀ¸¸é ¹è¿­À» ÃÊ±âÈ­ÇÑ´Ù
-		// 0À¸·Î ¸¸µé¾î¹ö¸²..
+		// ì²˜ë¦¬ê°€ ëë‚¬ìœ¼ë©´ ë°°ì—´ì„ ì´ˆê¸°í™”í•œë‹¤
+		// 0ìœ¼ë¡œ ë§Œë“¤ì–´ë²„ë¦¼..
 		addRequestedActors.clear();
 	}
 }

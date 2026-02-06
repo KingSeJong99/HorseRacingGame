@@ -35,6 +35,7 @@ namespace horseracing {
 
 		// 말의 순위 변동 함수
 		void SetRank(int changed_rank);
+		void SetLane(int lane_index);
 		void Reset();
 
 	private:

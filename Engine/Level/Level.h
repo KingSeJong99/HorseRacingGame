@@ -1,19 +1,19 @@
-#pragma once
+ï»¿#pragma once
 
-// 4251 ¸Ş½ÃÁö¸¦ Â÷´ÜÇÑ´Ù!
+// 4251 ë©”ì‹œì§€ë¥¼ ì°¨ë‹¨í•œë‹¤!
 #pragma warning(disable: 4251)
 
-// STL(Standard Tamplate Library - C++¿¡¼­ ±âº»ÀûÀ¸·Î Á¦°øÇÏ´Â ¶óÀÌºê·¯¸®)
-// Å©±â°¡ ¾Ë¾Æ¼­ º¯°æµÇ´Â µ¿Àû¹è¿­
-#include<vector>
+// STL(Standard Tamplate Library - C++ì—ì„œ ê¸°ë³¸ì ìœ¼ë¡œ ì œê³µí•˜ëŠ” ë¼ì´ë¸ŒëŸ¬ë¦¬)
+// í¬ê¸°ê°€ ì•Œì•„ì„œ ë³€ê²½ë˜ëŠ” ë™ì ë°°ì—´
 #include"common/RTTI.h"
-
+#include<vector>
+#include <Windows.h>
 
 namespace Mint
 {
-	// Actor Å¬·¡½º Àü¹æ¼±¾ğ
+	// Actor í´ë˜ìŠ¤ ì „ë°©ì„ ì–¸
 	class Actor;
-	// ¿ªÇÒ : ·¹º§¿¡ ÀÖ´Â ¸ğµç ¹°Ã¼(Actor)¸¦ °ü¸®ÇÑ´Ù.
+	// ì—­í•  : ë ˆë²¨ì— ìˆëŠ” ëª¨ë“  ë¬¼ì²´(Actor)ë¥¼ ê´€ë¦¬í•œë‹¤.
 	class MINT_API Level : public RTTI
 	{
 		RTTI_DECLARATIONS(Level, RTTI)
@@ -22,23 +22,23 @@ namespace Mint
 		Level();
 		virtual ~Level();
 
-		// °ÔÀÓ ÇÃ·¹ÀÌ ÀÌº¥Æ®
+		// ê²Œì„ í”Œë ˆì´ ì´ë²¤íŠ¸
 		virtual void BeginPlay();
 		virtual void Tick(float deltaTime);
-		virtual void Draw();
+		virtual void Draw(CHAR_INFO* backBuffer, int width, int height);
 
-		// ¾×ÅÍ Ãß°¡ ÇÔ¼ö
+		// ì•¡í„° ì¶”ê°€ í•¨ìˆ˜
 		void AddNewActor(Actor* newActor);
 
-		// ¾×ÅÍ Ãß°¡/Á¦°Å Ã³¸® ÇÔ¼ö
+		// ì•¡í„° ì¶”ê°€/ì œê±° ì²˜ë¦¬ í•¨ìˆ˜
 		void ProcessAddAndDestroyActors();
 
 	protected:
-		// ¾×ÅÍ ¹è¿­À» Ãß°¡ÇÑ´Ù
+		// ì•¡í„° ë°°ì—´ì„ ì¶”ê°€í•œë‹¤
 		std::vector<Actor*> actors;
 
-		// ½ÇÇà Áß¿¡ Ãß°¡ ¿äÃ»µÈ ¾×ÅÍÀÇ ¹è¿­
-		// actors ¹è¿­Àº ÀÌ¹Ì Tick¿¡¼­ È°µ¿ÁßÀÌ¹Ç·Î ÀÓ½Ã·Î ÀúÀåÇÑ´Ù!
+		// ì‹¤í–‰ ì¤‘ì— ì¶”ê°€ ìš”ì²­ëœ ì•¡í„°ì˜ ë°°ì—´
+		// actors ë°°ì—´ì€ ì´ë¯¸ Tickì—ì„œ í™œë™ì¤‘ì´ë¯€ë¡œ ì„ì‹œë¡œ ì €ì¥í•œë‹¤!
 		std::vector<Actor*> addRequestedActors;
 	};
 

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include"common/RTTI.h"
 #include"Math/Vector2.h"
@@ -6,12 +6,12 @@
 
 namespace Mint
 {
-	// Àü¹æ ¼±¾ğ
+	// ì „ë°© ì„ ì–¸
 	class Level;
 
 	class MINT_API Actor : public RTTI
 	{
-		// RTTI ÄÚµå Ãß°¡
+		// RTTI ì½”ë“œ ì¶”ê°€
 		RTTI_DECLARATIONS(Actor, RTTI)
 
 	public:
@@ -22,20 +22,20 @@ namespace Mint
 		);
 		virtual ~Actor();
 
-		// °ÔÀÓ ÇÃ·¹ÀÌ ÀÌº¥Æ®
+		// ê²Œì„ í”Œë ˆì´ ì´ë²¤íŠ¸
 		virtual void BeginPlay();
 		virtual void Tick(float deltaTime);
-		virtual void Draw();
+		virtual void Draw(CHAR_INFO* backBuffer, int width, int height);
 
-		// À§Ä¡ º¯°æ ¹× ÀĞ±â ÇÔ¼ö
+		// ìœ„ì¹˜ ë³€ê²½ ë° ì½ê¸° í•¨ìˆ˜
 		void SetPosition(const Vector2& newPosition);
 		inline Vector2 GetPosition() const { return position; }
 
-		// ¿À³Ê½± Ãß°¡/ÀĞ±â ÇÔ¼ö
+		// ì˜¤ë„ˆì‰½ ì¶”ê°€/ì½ê¸° í•¨ìˆ˜
 		inline void SetOwner(Level* newOwer) { owner = newOwer; }
 		inline Level* GetOwner() const { return owner; }
 
-		// Getter ÇÔ¼ö
+		// Getter í•¨ìˆ˜
 		inline bool HasBeganPlay() const { return hasBeganPlay; }
 		inline bool IsActive() const { return isActive && !destroyRequested; }
 		inline bool DestroyRequested() const { return destroyRequested; }
@@ -43,29 +43,29 @@ namespace Mint
 		inline int GetSortingOrder() const { return sortingOrder; }
 
 	protected:
-		// BeginPlay ÀÌº¥Æ®°¡ ÀÌ¹Ì ÀÖ´ÂÁö È®ÀÎÇÏ´Â º¯¼ö
+		// BeginPlay ì´ë²¤íŠ¸ê°€ ì´ë¯¸ ìˆëŠ”ì§€ í™•ì¸í•˜ëŠ” ë³€ìˆ˜
 		bool hasBeganPlay = false;
 
-		// È°¼ºÈ­ÀÌ µÇ¾îÀÖ´ÂÁö È®ÀÎÇÏ´Â º¯¼ö
+		// í™œì„±í™”ì´ ë˜ì–´ìˆëŠ”ì§€ í™•ì¸í•˜ëŠ” ë³€ìˆ˜
 		bool isActive = true;
 
-		// ÇöÀç ÇÁ·¹ÀÓ¿¡ »èÁ¦ ¿äÃ»À» ¹Ş¾Ò´ÂÁö È®ÀÎÇÏ´Â º¯¼ö
+		// í˜„ì¬ í”„ë ˆì„ì— ì‚­ì œ ìš”ì²­ì„ ë°›ì•˜ëŠ”ì§€ í™•ì¸í•˜ëŠ” ë³€ìˆ˜
 		bool destroyRequested = false;
 
-		// ±×¸± ¹®ÀÚ(ÀÌ¹ÌÁö)
+		// ê·¸ë¦´ ë¬¸ì(ì´ë¯¸ì§€)
 		char* image = nullptr;
 
-		// »ö»ó
+		// ìƒ‰ìƒ
 		Color color = Color::White;
 
-		// ¿À³Ê½±(Ownership)
+		// ì˜¤ë„ˆì‰½(Ownership)
 		Level* owner = nullptr;
 		
-		// ±×¸®±â ¿ì¼± ¼øÀ§(°ªÀÌ Å©¸é ¿ì¼±¼øÀ§°¡ ³ô´Ù)
+		// ê·¸ë¦¬ê¸° ìš°ì„  ìˆœìœ„(ê°’ì´ í¬ë©´ ìš°ì„ ìˆœìœ„ê°€ ë†’ë‹¤)
 		int sortingOrder = 0;
 
 	private:
-		// À§Ä¡
+		// ìœ„ì¹˜
 		Vector2 position;
 	};
 }

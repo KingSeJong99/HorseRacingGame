@@ -30,6 +30,9 @@
     <ClCompile Include="Horse\HorseFactory.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="HorseRacing\HorseRacing.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Horse\Horse.h">
@@ -42,6 +45,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Horse\HorseFactory.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="HorseRacing\HorseRacing.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
