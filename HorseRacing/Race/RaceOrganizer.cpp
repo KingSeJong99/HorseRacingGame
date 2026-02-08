@@ -4,6 +4,14 @@
 #include <random>
 #include <chrono>
 
+horseracing::RaceOrganizer::RaceOrganizer()
+{
+}
+
+horseracing::RaceOrganizer::~RaceOrganizer()
+{
+}
+
 // 파일 불러와서 말 입력하기
 void horseracing::RaceOrganizer::LoadAllHorseData(const std::string& file_name)
 {

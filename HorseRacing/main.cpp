@@ -2,7 +2,7 @@
 #include<iostream>
 
 int main() {
-	//horseracing::HorseRacing();
-
+	horseracing::HorseRacing horse_racing;
+	horse_racing.BeginPlay();
 	return 0;
 }

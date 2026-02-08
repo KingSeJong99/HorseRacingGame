@@ -1,4 +1,4 @@
-#include"Vector2.h"
+ï»¿#include"Vector2.h"
 #include"iostream"
 
 namespace Mint
@@ -13,7 +13,7 @@ namespace Mint
 	{
 	}
 
-	Vector2::Vector2(int x, int y)
+	Vector2::Vector2(float x, float y)
 		:x(x), y(y)
 	{
 	}
@@ -29,7 +29,7 @@ namespace Mint
 	
 	const char* Vector2::ToString()
 	{
-		// ±âÁ¸ ¹®ÀÚ¿­ÀÌ ÀÖ´Ù¸é Á¦°ÅÇÑ´Ù
+		// ê¸°ì¡´ ë¬¸ìì—´ì´ ìˆë‹¤ë©´ ì œê±°í•œë‹¤
 		if (string)
 		{
 			delete[] string;

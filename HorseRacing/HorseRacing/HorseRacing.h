@@ -2,9 +2,13 @@
 #define HORSERACING__HORSERACING_HORCERACING_H_
 
 #include "Engine/Engine.h"
+#include "Race/RaceOrganizer.h"
+
 #include <vector>
 
 namespace horseracing {
+	class LineTrack;
+	
 	// Engine의 실체
 	class HorseRacing : public Mint::Engine
 	{
@@ -23,6 +27,10 @@ namespace horseracing {
 
 	private:
 		static HorseRacing* instance_;
+
+		// Initialize를 위한 객체 생성
+		horseracing::RaceOrganizer organizer_;
+		horseracing::LineTrack* currentTrack_ = nullptr;
 	};
 }
 

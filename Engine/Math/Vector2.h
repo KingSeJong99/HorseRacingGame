@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include"Common/common.h"
 #include<Windows.h>
@@ -9,10 +9,10 @@ namespace Mint
 	{
 	public :
 		Vector2();
-		Vector2(int x, int y);
+		Vector2(float x, float y);
 		~Vector2();
 
-		// ¹®ÀÚ¿­·Î º¯È¯ÇØ¼­ ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+		// ë¬¸ìì—´ë¡œ ë³€í™˜í•´ì„œ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
 		const char* ToString();
 
 		Vector2 operator+(const Vector2& other) const;
@@ -21,20 +21,20 @@ namespace Mint
 		bool operator==(const Vector2& other) const;
 		bool operator!=(const Vector2& other) const;
 
-		// Çüº¯È¯ ¿¬»êÀÚ ¿À¹ö·Îµù
+		// í˜•ë³€í™˜ ì—°ì‚°ì ì˜¤ë²„ë¡œë”©
 		operator COORD() const;
 
-		// º¤ÅÍÀÇ ±âº» °ª
+		// ë²¡í„°ì˜ ê¸°ë³¸ ê°’
 		static Vector2 Zero;
 		static Vector2 One;
 		static Vector2 Up;
 		static Vector2 Right;
 
-		int x = 0;
-		int y = 0;
+		float x = 0;
+		float y = 0;
 
 	private:
-		// º¤ÅÍ °ªÀ» ¹®ÀÚ¿­·Î º¯È¯ÇÒ ¶§ »ç¿ëÇÒ º¯¼ö.
+		// ë²¡í„° ê°’ì„ ë¬¸ìì—´ë¡œ ë³€í™˜í•  ë•Œ ì‚¬ìš©í•  ë³€ìˆ˜.
 		char* string = nullptr;
 	};
 }

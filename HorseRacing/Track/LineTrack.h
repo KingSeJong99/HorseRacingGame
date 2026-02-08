@@ -20,13 +20,13 @@ namespace horseracing {
 		// 맵을 그린다
 		void Draw(CHAR_INFO* backBuffer, int width, int height) override;
 
+		void PrepareNewGame(RaceOrganizer& organizer);
+
 	private:
 		// 게임에서 사용할 맵을 로드하는 함수
 		void LoadMap(const char* fileName);
 
 		void RenderToBuffer(CHAR_INFO* buffer, int width, int height);
-
-		void PrepareNewGame(RaceOrganizer& organizer);
 
 		void Reset();
 
