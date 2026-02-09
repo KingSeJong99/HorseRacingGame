@@ -3,7 +3,7 @@
 // 이미 저장되어 있는 이름을 덮어쓰기보다 가져온다!
 // std::move 기능을 사용하거나 하는등의 이유로 name도 하나의 파일에서 불러오지만,
 // 매개변수를 무조건 합치는 것은 좋지 않다
-horseracing::Horse::Horse(const HorseStats& stats, std::string name)
+horseracing::Horse::Horse(const HorseStats& stats, std::wstring name)
 	: stats_(stats),
 	name_(std::move(name)),
 	current_speed_(0.0f),
@@ -18,6 +18,10 @@ void horseracing::Horse::Run(float delta_time, float track_width) {
 	if (!is_racing_) return;
 
 	CalculatePhysics(delta_time, track_width);
+}
+
+void horseracing::Horse::Tick(float delta_time) {
+	Run(delta_time, 1000.0f);
 }
 
 void horseracing::Horse::SetRank(int changed_rank) {

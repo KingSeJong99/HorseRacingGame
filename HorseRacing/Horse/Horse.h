@@ -24,14 +24,16 @@ namespace horseracing {
 			int current_rank;
 			bool is_finished;
 		};
-		Horse(const HorseStats& stats, std::string name);
+		Horse(const HorseStats& stats, std::wstring name);
 		~Horse() override;
 
 		void Run(float delta_time, float track_width);
+		virtual void Tick(float delta_time) override;
 
 		// 말의 정보 넘기기
 		inline const struct HorseRaceData& GetHorseRaceData() const { return race_data_; }
 		inline float GetCurrentSpeed() const { return current_speed_; }
+		inline std::wstring GetName() const { return name_; }
 
 		// 말의 순위 변동 함수
 		void SetRank(int changed_rank);
@@ -40,7 +42,7 @@ namespace horseracing {
 
 	private:
 
-		std::string name_;
+		std::wstring name_;
 		HorseStats stats_;
 		HorseRaceData race_data_;
 

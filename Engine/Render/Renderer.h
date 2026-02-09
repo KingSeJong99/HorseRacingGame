@@ -59,7 +59,6 @@ namespace Mint
 			int* sortingOrderArray = nullptr;
 		};
 
-
 		// 렌더링할 데이터
 		struct RenderCommand
 		{
@@ -75,7 +74,6 @@ namespace Mint
 			// 그리기 우선순위
 			int sortingOrder = 0;
 		};
-
 
 		// 화면 크기
 		Vector2 screenSize;

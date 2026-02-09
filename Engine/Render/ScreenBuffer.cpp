@@ -1,4 +1,4 @@
-#include "ScreenBuffer.h"
+ï»¿#include "ScreenBuffer.h"
 #include "Renderer.h"
 #include <iostream>
 
@@ -7,7 +7,7 @@ namespace Mint
 	ScreenBuffer::ScreenBuffer(const Vector2& screenSize)
 		: screenSize(screenSize)
 	{
-		// Console Output »ı¼ºÇÏ±â
+		// Console Output ìƒì„±í•˜ê¸°
 		buffer = CreateConsoleScreenBuffer(
 			GENERIC_READ | GENERIC_WRITE,
 			FILE_SHARE_READ | FILE_SHARE_WRITE,
@@ -16,7 +16,7 @@ namespace Mint
 			nullptr
 		);
 
-		// ¿¹¿Ü Ã³¸®ÇÏ±â
+		// ì˜ˆì™¸ ì²˜ë¦¬í•˜ê¸°
 		if (buffer == INVALID_HANDLE_VALUE)
 		{
 			MessageBoxA(
@@ -28,9 +28,9 @@ namespace Mint
 			__debugbreak();
 		}
 
-		// ¹öÆÛ »ı¼º ÈÄ¿¡´Â Å©±â¸¦ ÁöÁ¤ÇÑ´Ù
+		// ë²„í¼ ìƒì„± í›„ì—ëŠ” í¬ê¸°ë¥¼ ì§€ì •í•œë‹¤
 
-		// ÄÜ¼Ö Ã¢ Å©±â ÁöÁ¤ÇÏ±â
+		// ì½˜ì†” ì°½ í¬ê¸° ì§€ì •í•˜ê¸°
 		SMALL_RECT rect;
 		rect.Left = 0;
 		rect.Top = 0;
@@ -44,39 +44,39 @@ namespace Mint
 			__debugbreak();
 		}
 
-		// ¹öÆÛ Å©±â ¼³Á¤ÇÏ±â
+		// ë²„í¼ í¬ê¸° ì„¤ì •í•˜ê¸°
 		if (!SetConsoleScreenBufferSize(buffer, screenSize))
 		{
 			std::cerr << "Failed to set console buffer size.\n";
 			__debugbreak();
 		}
 
-		// Ä¿¼­ ²ô±â
+		// ì»¤ì„œ ë„ê¸°
 		CONSOLE_CURSOR_INFO info;
 		GetConsoleCursorInfo(buffer, &info);
 
-		// ²ôµµ·Ï ¼³Á¤ÇÏ±â
+		// ë„ë„ë¡ ì„¤ì •í•˜ê¸°
 		info.bVisible = false;
 		SetConsoleCursorInfo(buffer, &info);
 	}
 
 	ScreenBuffer::~ScreenBuffer()
 	{
-		// ¹öÆÛ ÇØÁ¦.
+		// ë²„í¼ í•´ì œ.
 		if (buffer)
 		{
 			CloseHandle(buffer);
 		}
 	}
 
-	// console ¹öÆÛ¸¦ Áö¿ì´Â ÇÔ¼ö
+	// console ë²„í¼ë¥¼ ì§€ìš°ëŠ” í•¨ìˆ˜
 	void ScreenBuffer::Clear()
 	{
-		// ½ÇÁ¦·Î È­¸éÀ» Áö¿ì°í ³­ µÚ¿¡ ¸î ±ÛÀÚ¸¦ ½è´ÂÁö ¹İÈ¯ÇÑ´Ù
+		// ì‹¤ì œë¡œ í™”ë©´ì„ ì§€ìš°ê³  ë‚œ ë’¤ì— ëª‡ ê¸€ìë¥¼ ì¼ëŠ”ì§€ ë°˜í™˜í•œë‹¤
 		DWORD writtenCount = 0;
 
-		// ÄÜ¼Ö ¹öÇÁ¿¡ ÀÖ´Â È­¸é Áö¿ì±â
-		// ±×·¡ÇÈ½º -> Áö¿ì±â -> ÇÑ »ö»óÀ¸·Î µ¤¾î¾²±â
+		// ì½˜ì†” ë²„í”„ì— ìˆëŠ” í™”ë©´ ì§€ìš°ê¸°
+		// ê·¸ë˜í”½ìŠ¤ -> ì§€ìš°ê¸° -> í•œ ìƒ‰ìƒìœ¼ë¡œ ë®ì–´ì“°ê¸°
 		FillConsoleOutputCharacterA(
 			buffer,
 			' ',
@@ -86,18 +86,18 @@ namespace Mint
 		);
 	}
 
-	// ÄÜ¼Ö¿¡ 2Â÷¿ø ±ÛÀÚ ¹è¿­À» ±×¸± ¶§ »ç¿ëÇÏ´Â ÇÔ¼ö
+	// ì½˜ì†”ì— 2ì°¨ì› ê¸€ì ë°°ì—´ì„ ê·¸ë¦´ ë•Œ ì‚¬ìš©í•˜ëŠ” í•¨ìˆ˜
 	void ScreenBuffer::Draw(CHAR_INFO * charInfo)
 	{
-		// ¼³Á¤ÇÒ ¹öÆÛÀÇ Å©±â
+		// ì„¤ì •í•  ë²„í¼ì˜ í¬ê¸°
 		SMALL_RECT writeRegion = {};
 		writeRegion.Left = 0;
 		writeRegion.Top = 0;
 		writeRegion.Right = static_cast<short>(screenSize.x - 1);
 		writeRegion.Bottom = static_cast<short>(screenSize.y - 1);
 
-		// ¹öÆÛ¿¡ ¹ŞÀº ±ÛÀÚ ¹è¿­ ¼³Á¤
-		WriteConsoleOutputA(
+		// ë²„í¼ì— ë°›ì€ ê¸€ì ë°°ì—´ ì„¤ì •
+		WriteConsoleOutputW(
 			buffer,
 			charInfo,
 			screenSize,

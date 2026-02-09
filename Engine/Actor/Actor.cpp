@@ -47,7 +47,7 @@ namespace Mint
 		// 저장되어야 할 곳
 		int index = y * width + x;
 
-		backBuffer[index].Char.AsciiChar = image[0];
+		backBuffer[index].Char.UnicodeChar = image[0];
 		backBuffer[index].Attributes = static_cast<WORD>(color);
 
 	}

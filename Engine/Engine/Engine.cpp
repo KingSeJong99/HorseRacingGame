@@ -72,6 +72,8 @@ namespace Mint
 			= setting.framerate == 0.0f ? 60.f : setting.framerate;
 		float oneFrameTime = 1.0f / setting.framerate;
 
+		BeginPlay();
+		
 		// 엔진 루프(게임루프)
 		while (!isQuit)
 		{
@@ -86,6 +88,8 @@ namespace Mint
 			deltaTime = deltaTime
 				/ static_cast<float>(frequency.QuadPart);
 
+			if (deltaTime > 0.1f) deltaTime = 0.1f;
+
 			// 고정 프레임 기법
 			if (deltaTime >= oneFrameTime)
 			{
@@ -93,7 +97,6 @@ namespace Mint
 
 				// 프레임 처리 !!
 				// Tick(1.0f / 60.0f);
-				BeginPlay();
 				Tick(deltaTime);
 				Draw();
 
@@ -151,7 +154,7 @@ namespace Mint
 		int total_size = width * height;
 		for (int i = 0; i < total_size; ++i)
 		{
-			buffer[i].Char.AsciiChar = ' ';
+			buffer[i].Char.UnicodeChar = L' ';
 			buffer[i].Attributes = static_cast<int>(Color::White);
 		}
 	}

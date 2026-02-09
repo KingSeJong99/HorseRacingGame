@@ -10,7 +10,7 @@ namespace horseracing {
 	public:
 		// 데이터를 받아서 Horse 객체를 생성한 후 반환한다
 		// Factory는 기능만 있으면 되므로 static 함수를 사용한다
-		static Horse* CreateHorse(const HorseStats& stats, const std::string& name);
+		static Horse* CreateHorse(const HorseStats& stats, const std::wstring& name);
 	};
 }
 #endif HORSERACING_HORSE_HORSEFACTORY_H_

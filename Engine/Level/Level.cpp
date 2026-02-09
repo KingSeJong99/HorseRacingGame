@@ -2,6 +2,7 @@
 #include"Actor/Actor.h"
 #include <algorithm>
 #include <Windows.h>
+#include <iostream>
 
 namespace Mint
 {
@@ -41,11 +42,16 @@ namespace Mint
 	}
 	void Level::Tick(float deltaTime)
 	{
+		std::cout << "Level 클래스에서 Tick 수행 전! \n";
+
 		// Actor에 이벤트를 흘린다
 		for (Actor* actor : actors)
 		{
 			actor->Tick(deltaTime);
 		}
+
+		// Hack::
+		std::cout << "Actor들에게 이벤트를 정상적으로 주었습니다. ㅎㅎ\n";
 
 	}
 	void Level::Draw(CHAR_INFO* backBuffer, int width, int height) {

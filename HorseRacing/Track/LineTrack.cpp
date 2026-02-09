@@ -20,33 +20,99 @@ horseracing::LineTrack::~LineTrack() {
 }
 
 void horseracing::LineTrack::Draw(CHAR_INFO* backBuffer, int width, int height) {
+
+	// Hack: 디버깅, 그리기가 잘 되는지 확인용
+	// backBuffer[0].Char.AsciiChar = '!';
+	// backBuffer[0].Attributes = FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+	
+	// 화면 구역 나누기(경기장과 UI)
+	int ui_divider_x = (int)(width * 0.7f);
+
 	// 레퍼런스 가져오기
 	Mint::Renderer& renderer = Mint::Renderer::Get();
 
-	for (int i = 0; i < 8; ++i) {
-		// 겹치지 않기 위해
-		float lane_y = i * 2.0f + 1.0f;
-		renderer.Submit("--------------------------------------------------", { 0.0f, lane_y }, Mint::Color::Blue, 0);
+	for (int i = 0; i <= 8; ++i) {
+		int y = i * 2 + 1;		// 각 레인의 y 좌표
+		if (y >= height) break;
+	
+		// 정해진 구역까지만 그리세여
+		for (int x = 0; x < ui_divider_x; ++x) {
+			int idx = (y * width) + x;
+		
+			// 출발선 
+			if (x == 0) {
+				backBuffer[idx].Char.UnicodeChar = L'|';
+				backBuffer[idx].Attributes = FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+			}
+			else if (x == width - 1) {
+				backBuffer[idx].Char.UnicodeChar = L'|';
+				backBuffer[idx].Attributes = FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+			}
+			else {
+				backBuffer[idx].Char.UnicodeChar = L'-';
+				backBuffer[idx].Attributes = FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+			}
+		}
 	}
 
 	// 말 그리기
-	for (auto horse : horses_) {
+	for (auto horse : horses_)
+	{
 		const auto& data = horse->GetHorseRaceData();
 
-		// 좌표 계산하기
-		// 화면 폭을 80by25로 가정함
-		Mint::Vector2 pos;
-		pos.x = data.position * 70.f;
-		pos.y = data.lane_index * 2.0f;
+		// 1. 위치 계산 (정수형 인덱스로 변환)
+		int x = (int)(data.position * (width - 1));
+		int y = (int)(data.lane_index * 1) * 2;
 
-		// Todo: 여유가 되면 유니코드로 바꾸기
-		renderer.Submit(
-			"M",				// 텍스트
-			pos,				// 위치
-			Mint::Color::Red,	// 색상
-			10					// 우선순위
-		);
+		// 2. 화면 범위 밖으로 나가는지 체크 (방어 코드!)
+		if (x < 0 || x >= ui_divider_x || y < 0 || y >= height) continue;
+
+		// 3. [핵심] Submit 대신 버퍼에 직접 기록!
+		int index = y * width + x;
+		backBuffer[index].Char.UnicodeChar = L'M';
+		backBuffer[index].Attributes = FOREGROUND_RED | FOREGROUND_INTENSITY; // 밝은 빨강
 	}
+
+	// UI 출력하기
+	int scoreboard_x = 27;	// Hack: 임시 값.
+	for (int i = 0; i < sorted_horses_.size(); ++i) {
+		auto horse = sorted_horses_[i];
+		std::wstring name = horse->GetName();		
+
+		// 순위 표시
+		std::wstring rank_text = std::to_wstring(i + 1) + L". " + name;
+		WORD color = (i == 0) ? 
+			(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY) : 
+			(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+
+
+		for (int char_idx = 0; char_idx < rank_text.length(); ++char_idx) {
+			int x = scoreboard_x + char_idx;
+			int y = i * 2 + 1;
+			
+			if (x < width && y < height) {
+				int idx = y * width + x;
+				backBuffer[idx].Char.UnicodeChar = rank_text[char_idx];
+				backBuffer[idx].Attributes = color;
+			}
+		}
+	}
+
+	// 로그 출력하기
+	int log_start_y = 18;
+	for (int i = 0; i < raceLogs_.size() && i < 2; ++i) {
+		const std::wstring& msg = raceLogs_[i];
+		for (int x = 0; x < msg.length() && x < width; ++x) {
+			int idx = (log_start_y + i) * width + x;
+			backBuffer[idx].Char.UnicodeChar = msg[x];
+			backBuffer[idx].Attributes = FOREGROUND_INTENSITY;
+		}
+	}
+}
+
+void horseracing::LineTrack::Tick(float deltaTime)
+{
+	this->Update(deltaTime);
 }
 
 void horseracing::LineTrack::LoadMap(const char* file_name) {
@@ -63,7 +129,7 @@ void horseracing::LineTrack::RenderToBuffer(CHAR_INFO* buffer, int width, int he
 		int idx = y * width + x;
 
 		if (idx >= 0 && idx < width * height) {
-			buffer[idx].Char.AsciiChar = 'M';
+			buffer[idx].Char.UnicodeChar = L'M';
 			buffer[idx].Attributes = FOREGROUND_GREEN | FOREGROUND_INTENSITY;
 		}
 	}
@@ -90,6 +156,9 @@ void horseracing::LineTrack::PrepareNewGame(RaceOrganizer& organizer) {
 		// Horse 클래스에 SetlaneIndex 같은게 있다면 여기서 호출한다
 		horses_[i]->SetLane(static_cast<int>(i + 1));
 	}
+
+	// Todo: 디버깅용으로 시작하자마자 초기화하도록함
+	this->Reset();
 }
 
 // 경기 시작을 위한 값 초기화
@@ -119,12 +188,12 @@ void horseracing::LineTrack::Update(float delta_time) {
 
 		// 말이 트랙의 절반을 지나친 경우
 		if (prev_pos < 0.5f && curr_pos >= 0.5f) {
-			AddRaceLog(std::to_string(data.lane_index) + "번 말이 반환점을 통과합니다!");
+			AddRaceLog(std::to_wstring(data.lane_index) + L"번 말이 반환점을 통과합니다!");
 		}
 
 		// 말이 트랙의 끝에 도달한 경우
 		if ((prev_pos < 1.0f && curr_pos >= 1.0f) && (horse_is_finished)) {
-			AddRaceLog(std::to_string(data.lane_index) + "번 말이 도착합니다!");
+			AddRaceLog(std::to_wstring(data.lane_index) + L"번 말이 도착합니다!");
 			++finished_horse_count_;
 		}
 	}
@@ -147,11 +216,11 @@ void horseracing::LineTrack::Update(float delta_time) {
 			}	 
 		}
 		
-		AddRaceLog("경기가 좋료되었습니다!!");
+		AddRaceLog(L"경기가 좋료되었습니다!!");
 
 		// UpdateRanks를 통해 1등이 sort된 sorted_horses 활용
 		if (!sorted_horses_.empty()) {
-			AddRaceLog(std::to_string(sorted_horses_[0]->GetHorseRaceData().lane_index) + "번 말이 우승을 차지합니다!");
+			AddRaceLog(std::to_wstring(sorted_horses_[0]->GetHorseRaceData().lane_index) + L"번 말이 우승을 차지합니다!");
 		}			
 	}
 }
@@ -178,7 +247,7 @@ void horseracing::LineTrack::UpdateRanks()
 }
 
 // 로그 출력 함수
-void horseracing::LineTrack::AddRaceLog(const std::string& msg) {
+void horseracing::LineTrack::AddRaceLog(const std::wstring& msg) {
 	raceLogs_.push_back(msg);
 	if (raceLogs_.size() > max_log_count_) {
 		raceLogs_.erase(raceLogs_.begin());		// 오래된 메시지를 삭제한다

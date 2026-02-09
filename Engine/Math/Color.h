@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include"Common/Common.h"
 #include<Windows.h>
@@ -7,8 +7,8 @@
 
 namespace Mint
 {
-	// ÄÜ¼Ö¿¡ ÅØ½ºÆ® »ö»ó µîÀ» ÁöÁ¤ÇÒ ¶§ »ç¿ëÇÒ »ö»ó ¿­°ÅÇüÀÌ´Ù
-	enum class MINT_API Color : unsigned short
+	// ì½˜ì†”ì— í…ìŠ¤íŠ¸ ìƒ‰ìƒ ë“±ì„ ì§€ì •í•  ë•Œ ì‚¬ìš©í•  ìƒ‰ìƒ ì—´ê±°í˜•ì´ë‹¤
+	enum class MINT_API Color : WORD
 	{
 		Black = 0,
 		Red = FOREGROUND_RED,

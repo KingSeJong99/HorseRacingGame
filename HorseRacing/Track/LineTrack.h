@@ -18,7 +18,9 @@ namespace horseracing {
 
 		// 이벤트 함수 오버라이드
 		// 맵을 그린다
-		void Draw(CHAR_INFO* backBuffer, int width, int height) override;
+		virtual void Draw(CHAR_INFO* backBuffer, int width, int height) override;
+
+		virtual void Tick(float deltaTime) override;
 
 		void PrepareNewGame(RaceOrganizer& organizer);
 
@@ -34,14 +36,14 @@ namespace horseracing {
 
 		void UpdateRanks();
 
-		void AddRaceLog(const std::string& msg);
+		void AddRaceLog(const std::wstring& msg);
 
 		// 말 객체들의 포인터를 벡터에 담기
 		std::vector<horseracing::Horse*> horses_;
 		
 		// 시스템 로그 찍기
 		// 예를들어 n번 말이 선두로 달리고 있습니다!
-		std::vector<std::string> raceLogs_;
+		std::vector<std::wstring> raceLogs_;
 		const int max_log_count_ = 7;
 
 		// 맵의 구간을 나타내는 변수

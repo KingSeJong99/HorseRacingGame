@@ -1,4 +1,4 @@
-#include "Renderer.h"
+ï»¿#include "Renderer.h"
 #include "ScreenBuffer.h"
 #include "Util/Util.h"
 
@@ -6,7 +6,7 @@ namespace Mint
 {
 	Renderer::Frame::Frame(int bufferCount)
 	{
-		// ¹è¿­ »ı¼º ¹× ÃÊ±âÈ­
+		// ë°°ì—´ ìƒì„± ë° ì´ˆê¸°í™”
 		charInfoArray = new CHAR_INFO[bufferCount];
 		memset(charInfoArray, 0, sizeof(CHAR_INFO) * bufferCount);
 		
@@ -22,8 +22,8 @@ namespace Mint
  
 	void Renderer::Frame::Clear(const Vector2& screenSize)
 	{
-		// 2Â÷¿ø ¹è¿­·Î ´Ù·ç´Â 1Â÷¿ø ¹è¿­À» ¼øÈ¸ÇÏ¸é¼­
-		// ºó ¹®ÀÚ(' ')¸¦ ¼³Á¤ÇÑ´Ù
+		// 2ì°¨ì› ë°°ì—´ë¡œ ë‹¤ë£¨ëŠ” 1ì°¨ì› ë°°ì—´ì„ ìˆœíšŒí•˜ë©´ì„œ
+		// ë¹ˆ ë¬¸ì(' ')ë¥¼ ì„¤ì •í•œë‹¤
 		const int width = screenSize.x;
 		const int height = screenSize.y;
  
@@ -31,23 +31,23 @@ namespace Mint
 		{
 			for (int x= 0; x < width; ++x)
 			{
-				// ¹è¿­ ÀÎµ¦½º ±¸ÇÏ±â
+				// ë°°ì—´ ì¸ë±ìŠ¤ êµ¬í•˜ê¸°
 				const int index = (y * width) + x;
 				
-				// ±ÛÀÚ °ª ¹× ¼Ó¼º ¼³Á¤
+				// ê¸€ì ê°’ ë° ì†ì„± ì„¤ì •
 				CHAR_INFO& info = charInfoArray[index];
-				info.Char.AsciiChar = ' ';
+				info.Char.UnicodeChar = L' ';
 				info.Attributes = 0;
 				
-				// ±×¸®±â ¿ì¼±¼øÀ§ ÃÊ±âÈ­ÇÏ±â
+				// ê·¸ë¦¬ê¸° ìš°ì„ ìˆœìœ„ ì´ˆê¸°í™”í•˜ê¸°
 				sortingOrderArray[index] = -1;
 			}
 		}
 	}
 
-	//  =================================ÇÁ·¹ÀÓ
+	//  =================================í”„ë ˆì„
 
-	//  Á¤Àû º¯¼ö ÃÊ±âÈ­
+	//  ì •ì  ë³€ìˆ˜ ì´ˆê¸°í™”
 	Renderer* Renderer::instance = nullptr;
 
 	Renderer::Renderer(const Vector2& screenSize)
@@ -55,21 +55,21 @@ namespace Mint
 	{
 		instance = this;
 		
-		// ÇÁ·¹ÀÓ °´Ã¼ »ı¼ºÇÏ±â
+		// í”„ë ˆì„ ê°ì²´ ìƒì„±í•˜ê¸°
 		const int bufferCount = screenSize.x * screenSize.y;
 		frame = new Frame(bufferCount);
 		
-		// ÇÁ·¹ÀÓ ÃÊ±âÈ­
+		// í”„ë ˆì„ ì´ˆê¸°í™”
 		frame->Clear(screenSize);
 		
-		// ÀÌÁß ¹öÆÛ °´Ã¼ »ı¼º ¹× ÃÊ±âÈ­!
+		// ì´ì¤‘ ë²„í¼ ê°ì²´ ìƒì„± ë° ì´ˆê¸°í™”!
 		screenBuffers[0] = new ScreenBuffer(screenSize);
 		screenBuffers[0]->Clear();
 		
 		screenBuffers[1] = new ScreenBuffer(screenSize);
 		screenBuffers[1]->Clear();
  
-		// È°¼ºÈ­ ¹öÆÛ ¼³Á¤ÇÏ±â
+		// í™œì„±í™” ë²„í¼ ì„¤ì •í•˜ê¸°
 		Present();
 	}
  
@@ -85,38 +85,38 @@ namespace Mint
  
 	void Renderer::Draw()
 	{
-		// È­¸é Áö¿ì±â
+		// í™”ë©´ ì§€ìš°ê¸°
 		Clear();
 
 
-		// ·»´õÅ¥ ¼øÈ¸ÇÏ¸é¼­ ±×¸®±â
-		// ÀüÁ¦Á¶°Ç: ·¹º§ÀÇ ¸ğµç ¾×ÅÍ°¡ ·»´õ·¯¿¡ SubmitÀ» ¿Ï·áÇØ¾ßÇÑ´Ù
+		// ë Œë”í ìˆœíšŒí•˜ë©´ì„œ ê·¸ë¦¬ê¸°
+		// ì „ì œì¡°ê±´: ë ˆë²¨ì˜ ëª¨ë“  ì•¡í„°ê°€ ë Œë”ëŸ¬ì— Submitì„ ì™„ë£Œí•´ì•¼í•œë‹¤
 		for (const RenderCommand& command : renderQueue)
 		{
-			// È­¸é¿¡ ±×¸± ÅØ½ºÆ®°¡ ¾øÀ¸¸é °Ç³Ê¶Ü
+			// í™”ë©´ì— ê·¸ë¦´ í…ìŠ¤íŠ¸ê°€ ì—†ìœ¼ë©´ ê±´ë„ˆëœ€
 			if (!command.text)
 			{
 				continue;
 			}
 
-			// ¼¼·Î ±âÁØ È­¸é ¹ş¾î³µ´ÂÁö È®ÀÎ
+			// ì„¸ë¡œ ê¸°ì¤€ í™”ë©´ ë²—ì–´ë‚¬ëŠ”ì§€ í™•ì¸
 			if (command.position.y < 0
 				|| command.position.y >= screenSize.y)
 			{
 				continue;
 			}
 
-			// È­¸é¿¡ ±×¸± ¹®ÀÚ¿­ ±æÀÌ
+			// í™”ë©´ì— ê·¸ë¦´ ë¬¸ìì—´ ê¸¸ì´
 			const int length = static_cast<int>(strlen(command.text));
 
-			// ¾È±×·Áµµ µÇ¸é °Ç³Ê ¶Ù±â
+			// ì•ˆê·¸ë ¤ë„ ë˜ë©´ ê±´ë„ˆ ë›°ê¸°
 			if (length <= 0)
 			{
 				continue;
 			}
 
-			// x ÁÂÇ¥ ±âÁØÀ¸·Î È­¸é¿¡¼­ ¹ş¾î³µ´ÂÁö È®ÀÎÇÏ±â
-			// À§Ä¡´Â ¿ŞÂÊ ±âÁØ: "abcde"
+			// x ì¢Œí‘œ ê¸°ì¤€ìœ¼ë¡œ í™”ë©´ì—ì„œ ë²—ì–´ë‚¬ëŠ”ì§€ í™•ì¸í•˜ê¸°
+			// ìœ„ì¹˜ëŠ” ì™¼ìª½ ê¸°ì¤€: "abcde"
 			const int startX = command.position.x;
 			const int endX = command.position.x + length - 1;
 
@@ -125,47 +125,47 @@ namespace Mint
 				continue;
 			}
 
-			// ½ÃÀÛ À§Ä¡
+			// ì‹œì‘ ìœ„ì¹˜
 			const int visibleStart = startX < 0 ? 0 : startX;
 			const int visibleEnd
 				= endX >= screenSize.x ? screenSize.x - 1 : endX;
 
-			// ¹®ÀÚ¿­ ¼³Á¤
+			// ë¬¸ìì—´ ì„¤ì •
 			for (int x = visibleStart; x <= visibleEnd; ++x)
 			{
-				// ¹®ÀÚ¿­ ÀÎµ¦½º
+				// ë¬¸ìì—´ ì¸ë±ìŠ¤
 				const int sourceIndex = x - startX;
 
-				// ÇÁ·¹ÀÓ (2Â÷¿ø ¹®ÀÚ ¹è¿­) ÀÎµ¦½º
+				// í”„ë ˆì„ (2ì°¨ì› ë¬¸ì ë°°ì—´) ì¸ë±ìŠ¤
 				const int index
 					= (command.position.y * screenSize.x) + x;
 
-				// ±×¸®±â ¿ì¼±¼øÀ§ ºñ±³
+				// ê·¸ë¦¬ê¸° ìš°ì„ ìˆœìœ„ ë¹„êµ
 				if (frame->sortingOrderArray[index]
 			> command.sortingOrder)
 				{
 					continue;
 				}
 
-				// µ¥ÀÌÅÍ ±â·ÏÇÏ±â
-				frame->charInfoArray[index].Char.AsciiChar
+				// ë°ì´í„° ê¸°ë¡í•˜ê¸°
+				frame->charInfoArray[index].Char.UnicodeChar
 					= command.text[sourceIndex];
 				frame->charInfoArray[index].Attributes
 					= (WORD)command.color;
 
-				// ¿ì¼±¼øÀ§ ¾÷µ¥ÀÌÆ®ÇÏ±â
+				// ìš°ì„ ìˆœìœ„ ì—…ë°ì´íŠ¸í•˜ê¸°
 				frame->sortingOrderArray[index]
 					= command.sortingOrder;
 			}
 		}
 
-		// ±×¸®±â.
+		// ê·¸ë¦¬ê¸°.
 		GetCurrentBuffer()->Draw(frame->charInfoArray);
 
-		// ¹öÆÛ ±³È¯ÇÏ±â
+		// ë²„í¼ êµí™˜í•˜ê¸°
 		Present();
 
-		// ·»´õ Å¥ ºñ¿ì±â
+		// ë Œë” í ë¹„ìš°ê¸°
 		renderQueue.clear();
 	}
 
@@ -188,11 +188,11 @@ namespace Mint
 
 	void Renderer::Clear()
 	{
-		// È­¸é Áö¿ì±â
-		// 1. ÇÁ·¹ÀÓ(2Â÷¿ø ¹è¿­ µ¥ÀÌÅÍ) Áö¿ì±â
+		// í™”ë©´ ì§€ìš°ê¸°
+		// 1. í”„ë ˆì„(2ì°¨ì› ë°°ì—´ ë°ì´í„°) ì§€ìš°ê¸°
 		frame->Clear(screenSize);
 
-		// 2. ÄÜ¼Ö ¹öÆÛ Áö¿ì±â
+		// 2. ì½˜ì†” ë²„í¼ ì§€ìš°ê¸°
 		GetCurrentBuffer()->Clear();
 	}
 
@@ -202,7 +202,7 @@ namespace Mint
 		 Color color,
 		 int sortingOrder)
 	{
-		 // ·»´õ µ¥ÀÌÅÍ »ı¼º ÈÄ Å¥¿¡ Ãß°¡ÇÏ±â
+		 // ë Œë” ë°ì´í„° ìƒì„± í›„ íì— ì¶”ê°€í•˜ê¸°
 		 RenderCommand command = {};
 		 command.text = text;
 		 command.position = position;
@@ -215,10 +215,52 @@ namespace Mint
 	
 	void Renderer::Present()
 	{
-		// ¹öÆÛ ±³È¯.
-		SetConsoleActiveScreenBuffer(GetCurrentBuffer()->GetBuffer());
-	
-		// ÀÎµ¦½º ±³Ã¼
+		// // ê·¸ë¦¼ì„ ê·¸ë¦° ë²„í¼ì˜ ì •ë³´ë¥¼ ê°€ì ¸ì˜¨ë‹¤
+		// auto* targetBuffer = GetCurrentBuffer();
+		// 
+		// COORD bufferSize = { (short)screenSize.x, (short)screenSize.y };
+		// COORD bufferCoord = { 0, 0 };
+		// SMALL_RECT writeRegion = { 0, 0, (short)(screenSize.x - 1), (short)(screenSize.y - 1) };
+		// 
+		// WriteConsoleOutput(
+		// 	targetBuffer->GetBuffer(),
+		// 	GetFrameBuffer(),
+		// 	bufferSize,
+		// 	bufferCoord,
+		// 	&writeRegion
+		// );
+		// 
+		// // ë²„í¼ êµí™˜.
+		// SetConsoleActiveScreenBuffer(targetBuffer->GetBuffer());
+		// 
+		// // ì¸ë±ìŠ¤ êµì²´
+		// currentBufferIndex = 1 - currentBufferIndex;
+
+		auto* target_buffer = GetCurrentBuffer();
+		if (!target_buffer) return; // [ì²´í¬ 1] ë²„í¼ ê°ì²´ ìì²´ê°€ ì—†ë‚˜?
+
+		HANDLE h_out = target_buffer->GetBuffer(); // [ì²´í¬ 2] í•¸ë“¤ì´ ìœ íš¨í•œê°€?
+
+		COORD buffer_size = { (short)screenSize.x, (short)screenSize.y };
+		COORD buffer_coord = { 0, 0 };
+		SMALL_RECT write_region = { 0, 0, (short)(screenSize.x - 1), (short)(screenSize.y - 1) };
+
+		// [ì²´í¬ 3] WinAPIì˜ ë°˜í™˜ê°’ì„ ë³€ìˆ˜ì— ë‹´ì•„!
+		BOOL success = WriteConsoleOutput(
+			h_out,
+			GetFrameBuffer(),
+			buffer_size,
+			buffer_coord,
+			&write_region
+		);
+
+		// [í•µì‹¬] ì—¬ê¸°ì„œ ë¸Œë ˆì´í¬í¬ì¸íŠ¸ë¥¼ ê±¸ê³  successê°€ TRUEì¸ì§€ FALSEì¸ì§€ ë´!
+		if (!success) {
+			DWORD error = GetLastError(); // ì‹¤íŒ¨í–ˆë‹¤ë©´ ì´ìœ (ì—ëŸ¬ì½”ë“œ)ë¥¼ ì•Œë ¤ì¤„ ê±°ì•¼.
+			__debugbreak(); // ì—¬ê¸°ì„œ ë©ˆì¶”ë©´ ë²”ì¸ì€ WinAPI ì„¤ì • ì˜¤ë¥˜!
+		}
+
+		SetConsoleActiveScreenBuffer(h_out);
 		currentBufferIndex = 1 - currentBufferIndex;
 	}
 	
