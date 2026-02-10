@@ -38,13 +38,15 @@ namespace horseracing {
 
 		void AddRaceLog(const std::wstring& msg);
 
+		const wchar_t* GetMedalEmoji(int rank);
+
 		// 말 객체들의 포인터를 벡터에 담기
 		std::vector<horseracing::Horse*> horses_;
 		
 		// 시스템 로그 찍기
 		// 예를들어 n번 말이 선두로 달리고 있습니다!
 		std::vector<std::wstring> raceLogs_;
-		const int max_log_count_ = 7;
+		const int max_log_count_ = 20;
 
 		// 맵의 구간을 나타내는 변수
 		float track_width_ = 1.0f;

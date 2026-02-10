@@ -23,6 +23,7 @@ namespace horseracing {
 			int lane_index;
 			int current_rank;
 			bool is_finished;
+			float finish_time;
 		};
 		Horse(const HorseStats& stats, std::wstring name);
 		~Horse() override;

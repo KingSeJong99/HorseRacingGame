@@ -16,7 +16,8 @@ horseracing::HorseRacing::HorseRacing() {
 	instance_ = this;
 
 	// Todo: screen_size_ 값을 어떻게 조절할 것인가?
-	this->screen_size_ = { 40.0f, 20.0f };
+	this->screen_size_.x = (float)this->setting.width;
+	this->screen_size_.y = (float)this->setting.height;
 }
 
 horseracing::HorseRacing::~HorseRacing() {
