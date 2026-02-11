@@ -1,10 +1,13 @@
 ﻿#include "Horse.h"
+#include "Engine/Engine.h"
+#include "iostream"
 
 // 이미 저장되어 있는 이름을 덮어쓰기보다 가져온다!
 // std::move 기능을 사용하거나 하는등의 이유로 name도 하나의 파일에서 불러오지만,
 // 매개변수를 무조건 합치는 것은 좋지 않다
 horseracing::Horse::Horse(const HorseStats& stats, std::wstring name)
-	: stats_(stats),
+	: stats_(stats), 
+	race_data_{},
 	name_(std::move(name)),
 	current_speed_(0.0f),
 	is_racing_(false) {
@@ -33,6 +36,11 @@ void horseracing::Horse::SetLane(int lane_index) {
 	race_data_.lane_index = lane_index;
 }
 
+// LineTrack으로 부터 시간 값을 받아옴
+void horseracing::Horse::SetCurrentTotalTime(double total_time) {
+	current_total_time_ = total_time;
+}
+
 // 말의 상태를 초기화해 경기에 참가할 수 있도록 한다
 void horseracing::Horse::Reset() {
 	current_speed_ = 0.0f;
@@ -44,6 +52,7 @@ void horseracing::Horse::Reset() {
 }
 
 void horseracing::Horse::CalculatePhysics(float delta_time, float track_width) {
+	if (race_data_.is_finished) return;
 	// HorseStats 등을 활용해 current_speed를 변화시킨다
 	current_speed_ += stats_.acceleration * delta_time;
 
@@ -60,6 +69,7 @@ void horseracing::Horse::CalculatePhysics(float delta_time, float track_width) {
 	if (race_data_.position >= 1.0f) {
 		race_data_.position = 1.0f;
 		race_data_.is_finished = true;
+		race_data_.finish_time = current_total_time_;
 		is_racing_ = false;
 	}
 }

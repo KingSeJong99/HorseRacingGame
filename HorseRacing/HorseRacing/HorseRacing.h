@@ -1,5 +1,4 @@
-﻿#ifndef HORSERACING__HORSERACING_HORCERACING_H_
-#define HORSERACING__HORSERACING_HORCERACING_H_
+﻿#pragma once
 
 #include "Engine/Engine.h"
 #include "Race/RaceOrganizer.h"
@@ -33,7 +32,5 @@ namespace horseracing {
 		horseracing::LineTrack* currentTrack_ = nullptr;
 	};
 }
-
-#endif HORSERACING__HORSERACING_HORCERACING_H_
 
 

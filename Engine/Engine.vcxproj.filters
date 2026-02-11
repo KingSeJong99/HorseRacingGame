@@ -36,6 +36,9 @@
     <ClCompile Include="Render\Renderer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Timer\cpu_timer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Engine.h">
@@ -71,35 +74,12 @@
     <ClInclude Include="Render\ScreenBuffer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Timer\cpu_timer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="메모용.txt" />
-    <Text Include="Engine\Engine1차.txt" />
-    <Text Include="Engine\Engine2차.txt" />
-    <Text Include="Engine\Engine3차.txt" />
-    <Text Include="Core\Input 1차.txt" />
-    <Text Include="Actor\Actor1차.txt" />
-    <Text Include="Level\Level1차.txt" />
-    <Text Include="Common\Common 1차.txt" />
     <Text Include="Common\RTTI.txt" />
-    <Text Include="Actor\Actor2차.txt" />
-    <Text Include="Math\Vector2 1차.txt" />
-    <Text Include="Engine\Engine4차.txt" />
-    <Text Include="Actor\Actor3차.txt" />
-    <Text Include="Render\Renderer 1차.txt" />
-    <Text Include="Engine\Engine5차.txt" />
-    <Text Include="Level\Level2차.txt" />
-    <Text Include="Math\Color 1차.txt" />
-    <Text Include="Math\Vector2 2차.txt" />
-    <Text Include="Util\Util 1차.txt" />
-    <Text Include="Actor\Actor4차.txt" />
-    <Text Include="Engine\Engine6차.txt" />
-    <Text Include="Engine\Engine7차.txt" />
-    <Text Include="Level\Level3차.txt" />
-    <Text Include="Level\Level4차.txt" />
-    <Text Include="Level\Level5차.txt" />
-    <Text Include="Render\Renderer2차.txt" />
-    <Text Include="Render\ScreenBuffer1차.txt" />
-    <Text Include="Util\Util2차.txt" />
   </ItemGroup>
 </Project>

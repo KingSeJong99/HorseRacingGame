@@ -27,7 +27,7 @@ horseracing::HorseRacing::~HorseRacing() {
 void horseracing::HorseRacing::BeginPlay()
 {
 	// 데이터 로드 
-	organizer_.LoadAllHorseData(L"horses.txt");
+	organizer_.LoadAllHorseData(L"../Config/horses.json");
 
 	// currentTrack_ 생성
 	currentTrack_ = new LineTrack();
@@ -35,14 +35,8 @@ void horseracing::HorseRacing::BeginPlay()
 	// 생성된 트랙에게 말 정보를 넘겨준다
 	currentTrack_->PrepareNewGame(organizer_);
 
-	// Hack: 디버깅
-	std::cout << "BeginPlay() 진행중....\n";
-
 	// 트랙을 레벨로 정식 인정
 	this->mainLevel = currentTrack_;
-
-	// Hack: 디버깅
-	std::cout << "BeginPlay() 끝....!\n";
 }
 
 void horseracing::HorseRacing::Tick(float deltaTime)
@@ -51,6 +45,16 @@ void horseracing::HorseRacing::Tick(float deltaTime)
 	
 	// mainLevel이 정상적으로 할당되었다면
 	if (mainLevel) {
+
+		// 재시작 요청이 들어왔다면
+		if (currentTrack_->ShouldRestart()) {
+			currentTrack_->Reset();
+			currentTrack_->PrepareNewGame(organizer_);
+			currentTrack_->ClearRestartFlag();
+		}
+
+		
+
 		mainLevel->Tick(deltaTime);
 	}
 

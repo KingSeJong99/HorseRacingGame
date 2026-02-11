@@ -1,5 +1,4 @@
-﻿#ifndef HORSERACING_HORCE_HORSE_H_
-#define HORSERACING_HORCE_HORSE_H_
+﻿#pragma once
 
 #include "Actor/Actor.h"
 #include <string>
@@ -20,10 +19,10 @@ namespace horseracing {
 		struct HorseRaceData {
 			// 일자 트랙에서만 움직이므로 y좌표는 고정, x좌표만 변경된다
 			float position = 0;
-			int lane_index;
-			int current_rank;
-			bool is_finished;
-			float finish_time;
+			int lane_index = -1;
+			int current_rank = -1;
+			bool is_finished = false;
+			float finish_time = 0.0f;
 		};
 		Horse(const HorseStats& stats, std::wstring name);
 		~Horse() override;
@@ -34,14 +33,20 @@ namespace horseracing {
 		// 말의 정보 넘기기
 		inline const struct HorseRaceData& GetHorseRaceData() const { return race_data_; }
 		inline float GetCurrentSpeed() const { return current_speed_; }
+		inline float GetStamina() const { return stats_.stamina; }
+		inline float GetMax_speed() const { return stats_.max_speed; }
 		inline std::wstring GetName() const { return name_; }
 
 		// 말의 순위 변동 함수
 		void SetRank(int changed_rank);
 		void SetLane(int lane_index);
+		void SetCurrentTotalTime(double total_time);
 		void Reset();
 
 	private:
+
+		// 말의 달리기 기능
+		void CalculatePhysics(float delta_time, float track_width);
 
 		std::wstring name_;
 		HorseStats stats_;
@@ -50,13 +55,8 @@ namespace horseracing {
 		float current_speed_ = 0.0f;
 		bool is_racing_ = false;
 
-		// 말의 달리기 기능
-		void CalculatePhysics(float delta_time, float track_width);
-
-
-
+		double current_total_time_ = 0.0;
 	};
 }
 
-#endif // HORSERACING_HORSE_HORSE_H_
 

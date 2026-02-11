@@ -1,5 +1,4 @@
-﻿#ifndef HORSERACING_HORSE_HORSEFACTORY_H_
-#define HORSERACING_HORSE_HORSEFACTORY_H_
+﻿#pragma once
 
 #include "Horse/Horse.h"
 
@@ -13,5 +12,4 @@ namespace horseracing {
 		static Horse* CreateHorse(const HorseStats& stats, const std::wstring& name);
 	};
 }
-#endif HORSERACING_HORSE_HORSEFACTORY_H_
 

@@ -1,5 +1,4 @@
-﻿#ifndef HORSERACING_RACE_RACEORGANIZER_H_
-#define HORSERACING_RACE_RACEORGANIZER_H_
+﻿#pragma once
 
 #include "Level/Level.h"
 #include "Horse/Horse.h"
@@ -32,5 +31,4 @@ namespace horseracing {
 
 	};
 }
-#endif HORSERACING_RACE_RACEORGANIZER_H_
 

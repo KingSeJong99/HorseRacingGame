@@ -103,6 +103,7 @@ xcopy $(OutDir)\Engine.lib $(SolutionDir)\Library\Engine\$(Platform)\$(Configura
     <ClCompile Include="Math\Vector2.cpp" />
     <ClCompile Include="Render\Renderer.cpp" />
     <ClCompile Include="Render\ScreenBuffer.cpp" />
+    <ClCompile Include="Timer\cpu_timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor\Actor.h" />
@@ -115,6 +116,7 @@ xcopy $(OutDir)\Engine.lib $(SolutionDir)\Library\Engine\$(Platform)\$(Configura
     <ClInclude Include="Level\Level.h" />
     <ClInclude Include="Math\Vector2.h" />
     <ClInclude Include="Render\ScreenBuffer.h" />
+    <ClInclude Include="Timer\cpu_timer.h" />
     <ClInclude Include="Util\Util.h" />
   </ItemGroup>
   <ItemGroup>
