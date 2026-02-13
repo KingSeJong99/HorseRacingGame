@@ -114,5 +114,13 @@ namespace Mint
 			wchar_t ch,
 			Color color,
 			int sorting_order);
+		
+		// 지정된 위치에 단일 문자 및 색상 정보를 직접 설정하는 함수 (캔버스 역할)
+		void SetCell(
+			int x, int y,
+			wchar_t ch,
+			Color foreground,
+			Color background,
+			int sorting_order = 0);
 	};
 }

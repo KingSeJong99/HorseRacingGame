@@ -72,12 +72,17 @@ namespace Mint
  
 	void Renderer::DrawCharacter(int x, int y, wchar_t ch, Color color, int sorting_order)
 	{
-		// 화면 경계 검사 (추가적인 방어 코드)
+		// DrawCharacter는 기본적으로 전경색을 설정하고 배경색은 Black으로 가정
+		SetCell(x, y, ch, color, Color::Black, sorting_order);
+	}
+
+	void Renderer::SetCell(int x, int y, wchar_t ch, Color foreground, Color background, int sorting_order)
+	{
+		// 화면 경계 검사
 		if (x < 0 || x >= screen_size_.x || y < 0 || y >= screen_size_.y) {
 			return;
 		}
 
-		// (이차원 배열인 좌표를 메모리 구조에 맞춰 1차로 나열하기)
 		const int index = (y * screen_size_.x) + x;
 
 		// sorting_order 값 판별하기
@@ -88,23 +93,26 @@ namespace Mint
 		// 입력 된 코드가 멀티바이트인지 아닌지 판별한다
 		int char_width = (ch > 127) ? 2 : 1;
 
+		// CHAR_INFO의 Attributes는 전경색과 배경색을 비트 OR 연산으로 조합
+		WORD attributes = (WORD)foreground | ((WORD)background << 4);
+
 		// 만약 멀티바이트(유니코드)라면
 		if (char_width == 2) {
 			// 그리기 가능하다면 멀티바이트가 리딩/트레일링 바이트임을 알린다
 			if (x + 1 < screen_size_.x) {
 				frame_->char_info_array[index].Char.UnicodeChar = ch;
-				frame_->char_info_array[index].Attributes = (WORD)color | COMMON_LVB_LEADING_BYTE;
+				frame_->char_info_array[index].Attributes = attributes | COMMON_LVB_LEADING_BYTE;
 				frame_->sorting_order_array[index] = sorting_order;
 
 				frame_->char_info_array[index + 1].Char.UnicodeChar = ch;
-				frame_->char_info_array[index + 1].Attributes = (WORD)color | COMMON_LVB_TRAILING_BYTE;
+				frame_->char_info_array[index + 1].Attributes = attributes | COMMON_LVB_TRAILING_BYTE;
 				frame_->sorting_order_array[index + 1] = sorting_order;
 			}
 		}
 		// 아스키 코드라면
 		else {
 			frame_->char_info_array[index].Char.UnicodeChar = ch;
-			frame_->char_info_array[index].Attributes = (WORD)color;
+			frame_->char_info_array[index].Attributes = attributes;
 			frame_->sorting_order_array[index] = sorting_order;
 		}
 	}
@@ -153,9 +161,6 @@ namespace Mint
 			DrawCommand(command);
 		}
 
-		// 그리기.
-		GetCurrentBuffer()->Draw(frame_->char_info_array);
-
 		// 버퍼 교환하기
 		Present();
 
@@ -172,6 +177,7 @@ namespace Mint
 		GetCurrentBuffer()->Clear();
 	}
 
+	// 아스키코드용 Submit 함수. 변환하여 유니코드용으로 보내진다
 	void Renderer::Submit(const char* text, const Vector2& position, Color color, int sorting_order)
 	{
 		// 입력을 제대로 받았는지 확인하기
@@ -186,6 +192,7 @@ namespace Mint
 		Submit(ws.c_str(), position, color, sorting_order);
 	}
 
+	// 유니코드용 Submit 함수
 	void Renderer::Submit(const wchar_t* text, const Vector2& position, Color color, int sorting_order) {
 		// 입력을 제대로 받았는지 확인하기
 		if (text == nullptr) return;
@@ -240,6 +247,7 @@ namespace Mint
 			__debugbreak(); 
 		}
 
+		// 버퍼에 저장된 내용을 화면에 전달하게 하기
 		SetConsoleActiveScreenBuffer(h_out);
 		current_buffer_index_ = 1 - current_buffer_index_;
 	}
