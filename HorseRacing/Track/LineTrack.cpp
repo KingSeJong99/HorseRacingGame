@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <iostream>
 #include <Windows.h>
+#include "Engine/Engine.h"
+#include "UI/HorseRaceHUD.h"
 
 
 
@@ -29,40 +31,30 @@ horseracing::LineTrack::~LineTrack() {
 	horses_.clear();
 }
 
-void horseracing::LineTrack::Draw(CHAR_INFO* backBuffer, int width, int height) {
+void horseracing::LineTrack::Draw(Mint::Renderer& renderer, int width, int height) {
+	UI::TextLayout textLayout(renderer);
+	HorseRaceHUD hud(textLayout);
 
-	// Draw 함수 내에 배치하면 동적으로 화면이 바뀔 때 반응이 가능하다
 	RenderLayout render_layout;
-
 	render_layout.width = width;
 	render_layout.height = height;
-
-	// 트랙의 너비
 	render_layout.track_start_x = 2;
 	render_layout.track_end_x = width / 2;
-
-	// UI는 무조건 트랙이 끝나고 4칸 뒤에 시작해서 20칸만 차지한다
 	render_layout.ui_start_x = render_layout.track_start_x + render_layout.track_end_x + 2;
 	render_layout.ui_end_x = render_layout.ui_start_x + 20;
-
-	// LOG는 UI가 끝나고 4칸 뒤에 시작한다
 	render_layout.log_start_x = render_layout.ui_end_x + 4;
 	render_layout.draw_y_start = 3;
 
-	// 레퍼런스 가져오기
-	Mint::Renderer& renderer = Mint::Renderer::Get();
-
 	if (!is_racing_started_) {
-		DrawBettingMenu(backBuffer, render_layout);
-
+		hud.DrawBettingMenu(render_layout, horses_, selected_horse_idx_);
 	} else {
-		DrawTrack(backBuffer, width, height, render_layout);
-		DrawHorses(backBuffer, width, height, render_layout);
-		DrawRankUI(backBuffer, width, height, render_layout);
-		DrawRaceLogs(backBuffer, width, height, render_layout);
+		hud.DrawTrack(render_layout);
+		hud.DrawHorses(render_layout, horses_);
+		hud.DrawRankUI(render_layout, horses_, sorted_horses_);
+		hud.DrawRaceLogs(render_layout, raceLogs_);
 	}
 	if (is_race_over_) {
-		DrawScoreboard(backBuffer, render_layout);
+		hud.DrawScoreboard(render_layout, sorted_horses_);
 	}
 }
 
@@ -82,21 +74,6 @@ void horseracing::LineTrack::Tick(float deltaTime)
 void horseracing::LineTrack::LoadMap(const char* file_name) {
 	
 	track_width_ = 10.0f;
-}
-
-void horseracing::LineTrack::RenderToBuffer(CHAR_INFO* buffer, int width, int height) {
-
-	for (auto horse : horses_) {
-		const auto& data = horse->GetHorseRaceData();
-		int x = static_cast<int>(data.position * (width - 2));
-		int y = data.lane_index * 2;
-		int idx = y * width + x;
-
-		if (idx >= 0 && idx < width * height) {
-			buffer[idx].Char.UnicodeChar = L'M';
-			buffer[idx].Attributes = FOREGROUND_GREEN | FOREGROUND_INTENSITY;
-		}
-	}
 }
 
 // 경기에 출전하는 말들을 데려온다
@@ -247,334 +224,6 @@ void horseracing::LineTrack::AddRaceLog(const std::wstring& msg) {
 	if (raceLogs_.size() > max_log_count_) {
 		raceLogs_.erase(raceLogs_.begin());		// 오래된 메시지를 삭제한다
 	}
-}
-
-const wchar_t* horseracing::LineTrack::GetMedalEmoji(int rank) {
-	switch (rank) {
-		case 1: return L"(G)";
-		case 2: return L"(S)";
-		case 3: return L"(B)";
-		case 4: return L"   ";
-		case 5: return L"   ";
-		case 6: return L"   ";
-		case 7: return L"   ";
-		case 8: return L"   ";
-	}
-}
-
-void horseracing::LineTrack::DrawTrack(CHAR_INFO* backBuffer, int width, int height, RenderLayout layout) {
-	// 트랙 그리기 (track_col_end_x까지만 그린다)
-	for (int i = 0; i <= 8; ++i) { // 각 레인의 y 좌표
-		int y = layout.draw_y_start + (i * 2);
-		if (y >= height) break;
-
-		for (int x = 0; x < layout.track_end_x; ++x) {
-			int draw_x = layout.track_start_x + x;
-			int idx = (y * width) + draw_x;
-
-			if (idx >= width * height) continue;
-			// 출발선 및 트랙 컬럼의 끝
-			if (x == 0 || x == layout.track_end_x - 1) {
-				backBuffer[idx].Char.UnicodeChar = L'|';
-				backBuffer[idx].Attributes = FOREGROUND_BLUE | FOREGROUND_INTENSITY;
-			}
-			else {
-				backBuffer[idx].Char.UnicodeChar = L'-';
-				backBuffer[idx].Attributes = FOREGROUND_GREEN | FOREGROUND_INTENSITY;
-			}
-		}
-	}
-}
-
-void horseracing::LineTrack::DrawHorses(CHAR_INFO* backBuffer, int width, int height, RenderLayout layout) {
-	// 말 그리기 (말은 트랙 영역 내에서만 그린다)
-	for (auto horse : horses_) {
-		const auto& data = horse->GetHorseRaceData();
-
-		// 1. 위치 계산 (정수형 인덱스로 변환)
-		// 말의 초기 위치를 트랙 컬럼 너비에 맞춰 매핑
-		int x = layout.track_start_x + (int)(data.position * (layout.track_end_x - 1));
-		int y = layout.draw_y_start + ((data.lane_index - 1) * 2) + 1;
-
-		// 2. 화면 범위 밖으로 나가는지 체크 (방어 코드!, track_col_end_x 사용)
-		if (x < 0 || x >= layout.track_end_x || y >= 0 || y < height) {
-			// 3. [핵심] 버퍼에 직접 기록!
-			int index = y * width + x;
-			backBuffer[index].Char.UnicodeChar = L'M';
-			backBuffer[index].Attributes = FOREGROUND_RED | FOREGROUND_INTENSITY; // 밝은 빨강
-		}
-	}
-}
-
-void horseracing::LineTrack::DrawRankUI(CHAR_INFO* backBuffer, int width, int height, RenderLayout layout) {
-	// UI 출력하기 (점수판)
-	// 실제 1등 말을 찾기 위해 전체 말들을 확인한다.
-	horseracing::Horse* actual_leading_horse = sorted_horses_.empty() ? nullptr : sorted_horses_[0];
-	// horseracing::Horse* actual_leading_horse = nullptr;
-	// float max_pos = -1.0f;
-	// for (auto horse_ptr : horses_) { // 원본 horses_ 벡터를 사용한다.
-	// 	if (horse_ptr->GetHorseRaceData().position > max_pos) {
-	// 		max_pos = horse_ptr->GetHorseRaceData().position;
-	// 		actual_leading_horse = horse_ptr;
-	// 	}
-	// }
-
-	for (int i = 0; i < horses_.size(); ++i) {
-		auto horse = horses_[i];
-		int rank = horse->GetHorseRaceData().current_rank;
-		int lane_index = horse->GetHorseRaceData().lane_index;
-		std::wstring name = horse->GetName();
-		const wchar_t* medal = GetMedalEmoji(rank);		// 순위에 따라 메달 지급!
-
-		// 순위 표시
-		// 'i + 1' 대신 말 객체에서 현재 순위를 가져온다.
-		std::wstring rank_text = std::wstring(medal) + L" " + std::to_wstring(lane_index) + L". " + name; // current_rank 유지
-		WORD color = (horse == actual_leading_horse) ?
-			(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY) :
-			(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-
-		int y = layout.draw_y_start + (i * 2) + 1;
-		int current_ui_x = layout.ui_start_x;
-
-		for (wchar_t ch : rank_text) {
-			int char_width = (ch > 127) ? 2 : 1;
-
-			if (current_ui_x + char_width >= layout.log_start_x - 1 || current_ui_x + char_width >= width) break;
-
-			if (y < height) {
-				int idx = y * width + current_ui_x;
-
-				if (char_width == 2) {
-					// 1. 첫 번째 칸 (Leading)
-					backBuffer[idx].Char.UnicodeChar = ch;
-					backBuffer[idx].Attributes = color | COMMON_LVB_LEADING_BYTE;
-
-					// 2. 두 번째 칸 (Trailing) - 데이터를 복사하되 속성만 다르게
-					if (current_ui_x + 1 < width) {
-						backBuffer[idx + 1].Char.UnicodeChar = ch; // 같은 글자를 넣어야 함
-						backBuffer[idx + 1].Attributes = color | COMMON_LVB_TRAILING_BYTE;
-					}
-				}
-				else {
-					// 일반 영문/숫자
-					backBuffer[idx].Char.UnicodeChar = ch;
-					backBuffer[idx].Attributes = color;
-				}
-			}
-			current_ui_x += char_width;
-		}
-	}
-}
-
-void horseracing::LineTrack::DrawRaceLogs(CHAR_INFO* backBuffer, int width, int height, RenderLayout layout) {
-	// Todo: 그럴 일은 없겠지만, 말들이 8라인을 넘게 달려선다면. 지금 처럼 수동이 아닌
-	// (말 + 1) * 2를 한 값을 적용해야 할 것이다
-	const int MAX_LOG_LINES = 16;
-	const int LOG_Y_END = layout.draw_y_start + MAX_LOG_LINES - 1;		// 로그의 Y좌표 맥시멈
-
-	// 최신 로그만 가져오기 위한 인덱스 계산
-	int num_logs = static_cast<int>(raceLogs_.size());
-	int display_count = (num_logs > MAX_LOG_LINES) ? MAX_LOG_LINES : num_logs;
-
-	// 1. 로그 영역 청소 (이전 프레임 잔상 제거)
-	for (int row = 0; row < MAX_LOG_LINES; ++row) {
-		int y = layout.draw_y_start + row;
-		for (int x = layout.log_start_x; x < width - 1; ++x) {
-			int idx = y * width + x;
-			if (idx < width * height) {
-				backBuffer[idx].Char.UnicodeChar = L' ';
-				backBuffer[idx].Attributes = 0;
-			}
-		}
-	}
-
-	// 일반적인 채팅창처럼 로그를 아래에서 위로 올려보내기
-	for (int i = 0; i < display_count; ++i) {
-		// 가장 최신의 로그 인덱스는 num_logs - 1이다
-		const std::wstring& msg = raceLogs_[num_logs - 1 - i];
-
-		// y좌표 계산하기
-		int y = LOG_Y_END - i;
-
-
-
-		// 2. 로그 출력 및 말줄임표 처리
-		int current_log_x = layout.log_start_x;
-		const int TRUNCATE_LIMIT = width - 4; // 화면 오른쪽 끝 경계
-		bool is_truncated = false;
-
-		for (wchar_t ch : msg) {
-			int char_width = (ch > 127) ? 2 : 1;
-
-			// 다음 글자를 찍었을 때 한계를 넘는지 확인
-			if (current_log_x + char_width > TRUNCATE_LIMIT) {
-				is_truncated = true;
-				break;
-			}
-			{
-				int idx = y * width + current_log_x;
-				if (char_width == 2) {
-					// 한글: Leading/Trailing 속성으로 간격 벌어짐 방지
-					backBuffer[idx].Char.UnicodeChar = ch;
-					backBuffer[idx].Attributes = FOREGROUND_INTENSITY | COMMON_LVB_LEADING_BYTE;
-					backBuffer[idx + 1].Char.UnicodeChar = ch;
-					backBuffer[idx + 1].Attributes = FOREGROUND_INTENSITY | COMMON_LVB_TRAILING_BYTE;
-				}
-				else {
-					// 영문/숫자 처리
-					backBuffer[idx].Char.UnicodeChar = ch;
-					backBuffer[idx].Attributes = FOREGROUND_INTENSITY;
-				}
-				current_log_x += char_width;
-			}
-		}
-
-		// 3. 잘렸다면 끝에 '...' 붙이기
-		if (is_truncated) {
-			for (int dot = 0; dot < 3; ++dot) {
-				int dot_idx = y * width + current_log_x + dot;
-				if (dot_idx < width * height) {
-					backBuffer[dot_idx].Char.UnicodeChar = L'.';
-					backBuffer[dot_idx].Attributes = FOREGROUND_INTENSITY;
-				}
-			}
-		}
-	}
-}
-
-void horseracing::LineTrack::DrawScoreboard(CHAR_INFO* backBuffer, const RenderLayout& layout) {
-	// 52 * 2
-	const int kScoreBoardWidth = 104;
-	const int kScoreBoardHeight = 5 + static_cast<int>(sorted_horses_.size());
-
-	// 전광판은 중앙에 설치할 것이기 때문에 중앙의 좌표를 구한다
-	int sx = ((layout.width - kScoreBoardWidth) / 2) + 6;
-	int sy = (layout.height - kScoreBoardHeight) / 2;
-
-	// 전광판 청소하기
-	for (int y = 0; y < kScoreBoardHeight; ++y) {
-		for (int x = 0; x < kScoreBoardWidth; ++x) {
-			int draw_x = sx + x;
-			int draw_y = sy + y;
-
-			// 버퍼 범위를 벗어나지 않도록 방어 코드를 작성합니다.
-			if (draw_x >= 0 && draw_x < layout.width && draw_y >= 0 && draw_y < layout.height) {
-				int idx = draw_y * layout.width + draw_x;
-				backBuffer[idx].Char.UnicodeChar = L' ';
-				backBuffer[idx].Attributes = 0;
-			}
-		}
-	}
-
-	// 2. 테두리 및 헤더 그리기
-	// 
-	// swprintf_s를 사용하여 문자열을 미리 만들음
-	DrawTextToBuffer(backBuffer, layout, sx, sy, L"┌──────────────────────────────────────────────────┐", 0x0007);
-	DrawTextToBuffer(backBuffer, layout, sx, sy + 1, L"│                [ FINAL RESULTS ]                 │", 0x0007);
-	DrawTextToBuffer(backBuffer, layout, sx, sy + 2, L"├──────┬────────────────────┬───────────┬──────────┤", 0x0007);
-	DrawTextToBuffer(backBuffer, layout, sx, sy + 3, L"│ RANK │     HORSE NAME     │   TIME    │  REMARK  │", 0x0007);
-	DrawTextToBuffer(backBuffer, layout, sx, sy + 4, L"├──────┼────────────────────┼───────────┼──────────┤", 0x0007);
-
-	// 3. 순위 데이터 출력 (sorted_horses_ 기준)
-	for (int i = 0; i < sorted_horses_.size(); ++i) {
-		auto horse = sorted_horses_[i];
-		const auto& data = horse->GetHorseRaceData();
-		std::wstring paddedName = PadRight(horse->GetName(), 18);			// 유니코드 기준 9칸까지 할당
-
-		wchar_t row[256];
-		swprintf_s(row, L"│  %d   │ %s │  %6.2fs  │          │",
-			i + 1, paddedName.c_str(), data.finish_time);
-
-		// 1등은 노란색(금색), 나머지는 흰색
-		WORD color = (i == 0) ? (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY) : (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-		DrawTextToBuffer(backBuffer, layout, sx, sy + 5 + i, row, color);
-	}
-
-	DrawTextToBuffer(backBuffer, layout, sx, sy + kScoreBoardHeight - 1, L"└──────┴────────────────────┴───────────┴──────────┘", 0x0007);
-}
-
-void horseracing::LineTrack::DrawTextToBuffer(CHAR_INFO* buffer, const RenderLayout& layout, int x, int y, const std::wstring& text, WORD color) {
-	int current_x = x;
-	for (wchar_t ch : text) {
-		int width = (ch > 127) ? 2 : 1;
-
-		// 글자가 화면을 넘어가지 못하도록 한다
-		if (current_x + width > layout.width) break;
-
-		int idx = y * layout.width + current_x;
-		if (width == 2) {
-			buffer[idx].Char.UnicodeChar = ch;
-			buffer[idx].Attributes = color | COMMON_LVB_LEADING_BYTE;
-
-			// trailing 바이트를 채우기 위한 체크
-			if (current_x + 1 < layout.width) {
-				buffer[idx + 1].Char.UnicodeChar = ch;
-				buffer[idx + 1].Attributes = color | COMMON_LVB_TRAILING_BYTE;
-			}
-		}
-		else {
-			buffer[idx].Char.UnicodeChar = ch;
-			buffer[idx].Attributes = color;
-		}
-		current_x += width;
-	}
-}
-
-void horseracing::LineTrack::DrawBettingMenu(CHAR_INFO* backBuffer, const RenderLayout& layout) {
-	const int kMenuWidth = 104; // 전광판과 동일한 값으로 일관성을 맞춤.
-	int sx = (layout.width - kMenuWidth) / 2;
-	int sy = (layout.height - 15) / 2; // 중앙 배치를 위한 Y 좌표
-
-	// 1. 메뉴 제목 및 헤더 그리기
-	DrawTextToBuffer(backBuffer, layout, sx, sy, L"┌──────────────────────────────────────────────────┐", 0x000F);
-	DrawTextToBuffer(backBuffer, layout, sx, sy + 1, L"│              [ BETTING : SELECT YOUR HORSE ]     │", 0x000F);
-	DrawTextToBuffer(backBuffer, layout, sx, sy + 2, L"├──────┬──────────────────┬──────┬──────┬──────────┤", 0x000F);
-	DrawTextToBuffer(backBuffer, layout, sx, sy + 3, L"│ NO.  │    HORSE NAME    │ SPD  │ STM  │  TRAIT   │", 0x000F);
-	DrawTextToBuffer(backBuffer, layout, sx, sy + 4, L"├──────┼──────────────────┼──────┼──────┼──────────┤", 0x000F);
-
-	// 2. 8마리의 스탯 리스트 출력
-	for (int i = 0; i < 8; ++i) {
-		auto horse = horses_[i];
-		std::wstring name_str = PadRight(horse->GetName(), 16);
-		std::wstring spd_str = PadRight(std::to_wstring(static_cast<int>(horse->GetMax_speed())), 4);
-		std::wstring stm_str = PadRight(std::to_wstring(static_cast<int>(horse->GetStamina())), 4);
-		std::wstring trait_str = PadRight(L"None", 8);
-
-		// 선택된 말은 노란색(또는 배경색 반전)으로 강조
-		WORD color = (i == selected_horse_idx_) ? 0x000E : 0x0007;
-
-		wchar_t row[256];
-		// 포맷팅, ASCII 코드를 제외한 非ASCII 코드는 폭을 인식 못하기 때문에
-		// 문자열은 %S로 제한 출력한다
-		swprintf_s(row, L"│  %d   │ %s │ %s │ %s │ %s │",
-			i + 1, name_str.c_str(),
-			spd_str.c_str(), stm_str.c_str(), trait_str.c_str()); // 특징 데이터 연결
-
-		DrawTextToBuffer(backBuffer, layout, sx, sy + 5 + i, row, color);
-	}
-	DrawTextToBuffer(backBuffer, layout, sx, sy + 13, L"└──────┴──────────────────┴──────┴──────┴──────────┘", 0x000F);
-}
-
-int horseracing::LineTrack::GetVisualWidth(const std::wstring& text) {
-	int width = 0;
-	for (wchar_t ch : text) {
-		// 문자열의 폭을 아스키 코드와 非아스키코드로 구분하여 구한다
-		width += (ch > 127) ? 2 : 1;	
-	}
-	return width;
-}
-
-std::wstring horseracing::LineTrack::PadRight(std::wstring text, int targetWidth) {
-	int currentWidth = GetVisualWidth(text);
-
-	// 채워져야 할 값 = 유니코드 - 아스키 코드의 차이 만큼
-	int paddingNeeded = targetWidth - currentWidth;
-
-	if (paddingNeeded > 0) {
-		// 부족한 칸 수 만큼 공백을 추가한다
-		text.append(paddingNeeded, L' ');
-	}
-	return text;
 }
 
 void horseracing::LineTrack::HandleInput() {

@@ -66,17 +66,15 @@ void horseracing::HorseRacing::Tick(float deltaTime)
 
 void horseracing::HorseRacing::Draw()
 {
-	// 버퍼 지우기
-	CHAR_INFO* buffer = renderer->GetFrameBuffer();
-	
-	// 지우기
-	this->Clear(buffer, screen_size_.x, screen_size_.y);
-
 	// 버퍼 전달하기
 	if (mainLevel) {
-		mainLevel->Draw(buffer, screen_size_.x, screen_size_.y);
+		renderer->Clear();
+		mainLevel->Draw(*renderer, (int)screen_size_.x, (int)screen_size_.y);
+		renderer->Present();
 	}
 
-	// 히히 발싸!
-	renderer->Present();
+	else {
+		std::cerr << "mainLevel 할당에 실패했습니다!";
+		__debugbreak;
+	}
 }

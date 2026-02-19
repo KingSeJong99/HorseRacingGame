@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -92,19 +92,20 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\;..\Includes\Engine\;$(SolutionDir)\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\;..\Includes\Engine\;$(SolutionDir)\Engine;$(SolutionDir)\UI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\Library\Engine\;..\Library\Engine\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Library\Engine\;..\Library\Engine\$(Platform)\$(Configuration)\;..\Library\UI\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Engine.lib;UI.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>xcopy ..\Config $(OutDir)..\ /e /y</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>xcopy "$(OutDir)..\Engine\Engine.dll" "$(OutDir)" /Y</Command>
+      <Command>xcopy "$(OutDir)..\Engine\Engine.dll" "$(OutDir)" /Y
+xcopy "$(OutDir)..\UI\UI.dll" "$(OutDir)" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -115,19 +116,20 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\;..\Includes\Engine\;$(SolutionDir)\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\;..\Includes\Engine\;$(SolutionDir)\Engine;$(SolutionDir)\UI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\Library\Engine\;..\Library\Engine\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Library\Engine\;..\Library\Engine\$(Platform)\$(Configuration)\;..\Library\UI\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Engine.lib;UI.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>xcopy ..\Config $(OutDir)..\ /e /y</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>xcopy "$(OutDir)..\Engine\Engine.dll" "$(OutDir)" /Y</Command>
+      <Command>xcopy "$(OutDir)..\Engine\Engine.dll" "$(OutDir)" /Y
+xcopy "$(OutDir)..\UI\UI.dll" "$(OutDir)" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -136,19 +138,20 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\;..\Includes\Engine\;$(SolutionDir)\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\;..\Includes\Engine\;$(SolutionDir)\Engine;$(SolutionDir)\UI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\Library\Engine\;..\Library\Engine\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Library\Engine\;..\Library\Engine\$(Platform)\$(Configuration)\;..\Library\UI\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Engine.lib;UI.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>xcopy ..\Config $(OutDir)..\ /e /y</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>xcopy "$(OutDir)..\Engine\Engine.dll" "$(OutDir)" /Y</Command>
+      <Command>xcopy "$(OutDir)..\Engine\Engine.dll" "$(OutDir)" /Y
+xcopy "$(OutDir)..\UI\UI.dll" "$(OutDir)" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -159,19 +162,20 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\;..\Includes\Engine\;$(SolutionDir)\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\;..\Includes\Engine\;$(SolutionDir)\Engine;$(SolutionDir)\UI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\Library\Engine\;..\Library\Engine\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Library\Engine\;..\Library\Engine\$(Platform)\$(Configuration)\;..\Library\UI\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Engine.lib;UI.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>xcopy ..\Config $(OutDir)..\ /e /y</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>xcopy "$(OutDir)..\Engine\Engine.dll" "$(OutDir)" /Y</Command>
+      <Command>xcopy "$(OutDir)..\Engine\Engine.dll" "$(OutDir)" /Y
+xcopy "$(OutDir)..\UI\UI.dll" "$(OutDir)" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -181,6 +185,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Race\RaceOrganizer.cpp" />
     <ClCompile Include="Track\LineTrack.cpp" />
+    <ClCompile Include="UI\HorseRaceHUD.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HorseRacing\HorseRacing.h" />
@@ -188,6 +193,7 @@
     <ClInclude Include="Horse\HorseFactory.h" />
     <ClInclude Include="Race\RaceOrganizer.h" />
     <ClInclude Include="Track\LineTrack.h" />
+    <ClInclude Include="UI\HorseRaceHUD.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
