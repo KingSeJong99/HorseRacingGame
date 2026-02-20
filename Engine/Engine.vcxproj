@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -100,11 +100,11 @@ xcopy $(OutDir)\Engine.lib $(SolutionDir)\Library\Engine\$(Platform)\$(Configura
     <ClCompile Include="Engine\Engine.cpp" />
     <ClCompile Include="Core\Input.cpp" />
     <ClCompile Include="Level\Level.cpp" />
+    <ClCompile Include="Math\Color.cpp" />
     <ClCompile Include="Math\Vector2.cpp" />
     <ClCompile Include="Render\Renderer.cpp" />
     <ClCompile Include="Render\ScreenBuffer.cpp" />
     <ClCompile Include="Timer\cpu_timer.cpp" />
-    <ClCompile Include="UI\TextLayout.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor\Actor.h" />
@@ -118,7 +118,6 @@ xcopy $(OutDir)\Engine.lib $(SolutionDir)\Library\Engine\$(Platform)\$(Configura
     <ClInclude Include="Math\Vector2.h" />
     <ClInclude Include="Render\ScreenBuffer.h" />
     <ClInclude Include="Timer\cpu_timer.h" />
-    <ClInclude Include="UI\TextLayout.h" />
     <ClInclude Include="Util\Util.h" />
   </ItemGroup>
   <ItemGroup>

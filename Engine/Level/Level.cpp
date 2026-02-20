@@ -54,7 +54,7 @@ namespace Mint
 		std::cout << "Actor들에게 이벤트를 정상적으로 주었습니다. ㅎㅎ\n";
 
 	}
-	void Level::Draw(CHAR_INFO* backBuffer, int width, int height) {
+	void Level::Draw(Renderer& renderer, int width, int height) {
 		// 1. 활성화된 액터만 추리기
 		// 존재도 하고, 활성된 아이만.
 		std::vector<Actor*> active_actors;
@@ -74,7 +74,8 @@ namespace Mint
 		// 3. 정렬된 순서대로 액터의 Draw 호출
 		for (auto* actor : active_actors)
 		{
-			actor->Draw(backBuffer, width, height);
+			// TODO: Actor::Draw 시그니처 변경 필요
+			// actor->Draw(renderer, width, height);
 		}
 	}
 

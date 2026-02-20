@@ -39,7 +39,7 @@
     <ClCompile Include="Timer\cpu_timer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="UI\TextLayout.cpp">
+    <ClCompile Include="Math\Color.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -78,9 +78,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Timer\cpu_timer.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\TextLayout.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

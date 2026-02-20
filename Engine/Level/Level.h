@@ -13,6 +13,8 @@ namespace Mint
 {
 	// Actor 클래스 전방선언
 	class Actor;
+	class Renderer;
+
 	// 역할 : 레벨에 있는 모든 물체(Actor)를 관리한다.
 	class MINT_API Level : public RTTI
 	{
@@ -25,7 +27,7 @@ namespace Mint
 		// 게임 플레이 이벤트
 		virtual void BeginPlay();
 		virtual void Tick(float deltaTime);
-		virtual void Draw(CHAR_INFO* backBuffer, int width, int height);
+		virtual void Draw(Renderer& renderer, int width, int height);
 
 		// 액터 추가 함수
 		void AddNewActor(Actor* newActor);

@@ -266,14 +266,10 @@ namespace Mint
 			return;
 		}
 
-		CHAR_INFO* back_buffer = renderer->GetFrameBuffer();
-		if (back_buffer == nullptr) return;
+		renderer->Clear();
 
-		// 화면 비우기
-		Clear(back_buffer, (int)screen_size_.x, (int)screen_size_.y);
-
-		// 레벨에게 그리기를 명령한다
-		mainLevel->Draw(back_buffer, (int)screen_size_.x, (int)screen_size_.y);
+		// 레벨에게 그리기를 명령한다 (Renderer 객체 전달)
+		mainLevel->Draw(*renderer, (int)screen_size_.x, (int)screen_size_.y);
 
 		// 화면 교체하기
 		renderer->Present();

@@ -6,20 +6,20 @@ namespace horseracing {
 
     HorseRaceHUD::HorseRaceHUD(UI::TextLayout& layout) : ui_layout_(layout) {}
 
-    void HorseRaceHUD::DrawBettingMenu(const RenderLayout& layout, const std::vector<Horse*>& horses, int selected_idx) {
+    void HorseRaceHUD::DrawBettingMenu(const RenderLayout& render_layout, const std::vector<Horse*>& horses, int selected_idx) {
         const int kMenuWidth = 104; // 전광판과 동일한 값으로 일관성을 맞춤.
-        int sx = (layout.width - kMenuWidth) / 2;
-        int sy = (layout.height - 15) / 2; // 중앙 배치를 위한 Y 좌표
+        int start_x = (render_layout.width - kMenuWidth) / 2;
+        int start_y = (render_layout.height - 15) / 2; // 중앙 배치를 위한 Y 좌표
 
         // 1. 메뉴 박스 그리기
-        ui_layout_.DrawBox(sx, sy, kMenuWidth, 15, L"BETTING : SELECT YOUR HORSE", Mint::Color::White, Mint::Color::Black, Mint::Color::White);
+        ui_layout_.DrawBox(start_x, start_y, kMenuWidth, 15, L"BETTING : SELECT YOUR HORSE", Mint::Color::White, Mint::Color::Black, Mint::Color::White);
 
         // 2. 헤더 그리기
         // DrawBox 내부에서 이미 테두리를 그렸으므로 내용만 채운다.
         // 좌표 조정이 필요함. DrawBox는 sx, sy부터 시작하므로
         // 헤더는 sx + 2 정도부터 시작
-        int content_sx = sx + 2;
-        int content_sy = sy + 2;
+        int content_sx = start_x + 2;
+        int content_sy = start_y + 2;
 
         ui_layout_.DrawTextAligned(content_sx, content_sy, kMenuWidth - 8, L"NO.    HORSE NAME          SPD     STM     TRAIT",
             UI::Alignment::Left, Mint::Color::BrightWhite);
@@ -124,7 +124,7 @@ namespace horseracing {
             int y = LOG_Y_END - i;
 
             // 2. 로그 출력
-            layout.DrawTextAligned(layout.log_start_x, y,
+            ui_layout_.DrawTextAligned(layout.log_start_x, y,
                 layout.width - layout.log_start_x - 4, // 여백 좀 줌
                 msg, UI::Alignment::Left, Mint::Color::Gray);
         }
@@ -146,8 +146,8 @@ namespace horseracing {
         int content_sx = sx + 2;
         int content_sy = sy + 2;
 
-        layout.DrawTextAligned(content_sx, content_sy, kScoreBoardWidth - 4, L"RANK     HORSE NAME          TIME         REMARK", UI::Alignment::Left, Mint::Color::White);
-        layout.DrawTextAligned(content_sx, content_sy + 1, kScoreBoardWidth - 4, L"──────────────────────────────────────────────────", UI::Alignment::Left, Mint::Color::White);
+        ui_layout_.DrawTextAligned(content_sx, content_sy, kScoreBoardWidth - 4, L"RANK     HORSE NAME          TIME         REMARK", UI::Alignment::Left, Mint::Color::White);
+        ui_layout_.DrawTextAligned(content_sx, content_sy + 1, kScoreBoardWidth - 4, L"──────────────────────────────────────────────────", UI::Alignment::Left, Mint::Color::White);
 
         // 3. 순위 데이터 출력 (sorted_horses_ 기준)
         for (int i = 0; i < sorted_horses.size(); ++i) {
@@ -161,7 +161,7 @@ namespace horseracing {
 
             // 1등은 노란색(금색), 나머지는 흰색
             Mint::Color color = (i == 0) ? Mint::Color::Yellow : Mint::Color::Gray;
-            layout.DrawTextAligned(content_sx, content_sy + 2 + i, kScoreBoardWidth - 4, row, UI::Alignment::Left, color);
+            ui_layout_.DrawTextAligned(content_sx, content_sy + 2 + i, kScoreBoardWidth - 4, row, UI::Alignment::Left, color);
         }
     }
 

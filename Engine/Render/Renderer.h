@@ -19,9 +19,6 @@ namespace Mint
 		Renderer(const Vector2& screen_size);
 		~Renderer();
 
-		// 싱글톤 접근 함수
-		static Renderer& Get();
-
 		// 그리기 함수
 		void Draw();
 
@@ -55,6 +52,15 @@ namespace Mint
 
 		// 화면을 지우는 함수
 		void Clear();
+
+		// 지정된 위치에 단일 문자 및 색상 정보를 직접 설정하는 함수 (캔버스 역할)
+		// RenderCommand를 생성하지 않고 프레임 버퍼에 즉시 기록한다
+		void SetCell(
+			int x, int y,
+			wchar_t ch,
+			Color foreground,
+			Color background,
+			int sorting_order = 0);
 
 	private:
 		// 프레임 구조체 - 2차원 글자 배열의 항목이 될 구조체임
@@ -115,12 +121,5 @@ namespace Mint
 			Color color,
 			int sorting_order);
 		
-		// 지정된 위치에 단일 문자 및 색상 정보를 직접 설정하는 함수 (캔버스 역할)
-		void SetCell(
-			int x, int y,
-			wchar_t ch,
-			Color foreground,
-			Color background,
-			int sorting_order = 0);
 	};
 }

@@ -1,14 +1,12 @@
-#pragma once
-#pragma warning(disable: 4251)	// ´Ş¸® ÇÒ ¹æµµ°¡ ¾ø´Ù
-#pragma warning(disable: 4172)	// À§Çè¼ºÀ» ÀÎÁöÇÑ »óÅÂ·Î »ç¿ëÇÑ´Ù
-
-
-// #define ENGINE_BUILD_DLL 1
+ï»¿#pragma once
+#pragma warning(disable: 4251)	// ë‹¬ë¦¬ í•  ë°©ë„ê°€ ì—†ë‹¤
+#pragma warning(disable: 4172)	// ìœ„í—˜ì„±ì„ ì¸ì§€í•œ ìƒíƒœë¡œ ì‚¬ìš©í•œë‹¤
 
 #define DLLEXPORT   __declspec(dllexport)
 #define DLLIMPORT   __declspec(dllimport)
 
-// ENGINE_BUILD_DLLÀÌ ¼±¾ğµÇ¾î ÀÖ´ÂÁö¿¡ µû¶ó ºĞ±â
+// MINT_API: DLL ë‚´ë³´ë‚´ê¸°/ê°€ì ¸ì˜¤ê¸° ë§¤í¬ë¡œ
+// Engine í”„ë¡œì íŠ¸ ì„¤ì •ì˜ ì „ì²˜ë¦¬ê¸° ì •ì˜ì— 'ENGINE_EXPORTS'ê°€ í¬í•¨ë˜ì–´ì•¼ í•©ë‹ˆë‹¤.
 #if ENGINE_BUILD_DLL
 #define MINT_API DLLEXPORT
 #else
