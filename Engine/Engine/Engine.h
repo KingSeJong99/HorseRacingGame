@@ -45,8 +45,6 @@ namespace Mint
 		// 전역변수 접근 함수
 		static Engine& Get();
 
-		Renderer* GetRenderer() { return renderer; }
-
 	protected:
 
 		void Clear(CHAR_INFO* buffer, int width, int height);

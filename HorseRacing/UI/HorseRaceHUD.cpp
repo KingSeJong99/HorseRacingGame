@@ -43,10 +43,7 @@ namespace horseracing {
         }
     }
 
-    void HorseRaceHUD::DrawTrack(const RenderLayout& render_layout) {
-        Mint::Renderer* renderer = Mint::Engine::Get().GetRenderer();
-        if (!renderer) return;
-
+    void HorseRaceHUD::DrawTrack(const RenderLayout& render_layout, Mint::Renderer& renderer) {
         for (int i = 0; i <= 8; ++i) {
             int y = render_layout.draw_y_start + (i * 2);
             if (y >= render_layout.height) break;
@@ -54,19 +51,16 @@ namespace horseracing {
             for (int x = 0; x < render_layout.track_end_x; ++x) {
                 int draw_x = render_layout.track_start_x + x;
                 if (x == 0 || x == render_layout.track_end_x - 1) {
-                    renderer->SetCell(draw_x, y, L'|', Mint::Color::BrightBlue, Mint::Color::Black);
+                    renderer.SetCell(draw_x, y, L'|', Mint::Color::BrightBlue, Mint::Color::Black);
                 }
                 else {
-                    renderer->SetCell(draw_x, y, L'-', Mint::Color::BrightGreen, Mint::Color::Black);
+                    renderer.SetCell(draw_x, y, L'-', Mint::Color::BrightGreen, Mint::Color::Black);
                 }
             }
         }
     }
 
-    void HorseRaceHUD::DrawHorses(const RenderLayout& render_layout, const std::vector<Horse*>& horses) {
-        Mint::Renderer* renderer = Mint::Engine::Get().GetRenderer();
-        if (!renderer) return;
-
+    void HorseRaceHUD::DrawHorses(const RenderLayout& render_layout, const std::vector<Horse*>& horses, Mint::Renderer& renderer) {
         for (auto horse : horses) {
             const auto& data = horse->GetHorseRaceData();
             int x = render_layout.track_start_x + (int)(data.position * (render_layout.track_end_x - 1));
@@ -75,7 +69,7 @@ namespace horseracing {
             if (x < 0 || x >= render_layout.track_end_x || y < 0 || y >= render_layout.height) {
                 continue;
             }
-            renderer->SetCell(x, y, L'M', Mint::Color::BrightRed, Mint::Color::Black);
+            renderer.SetCell(x, y, L'M', Mint::Color::BrightRed, Mint::Color::Black);
         }
     }
 
@@ -99,11 +93,11 @@ namespace horseracing {
         }
     }
 
-    void HorseRaceHUD::DrawRaceLogs(const RenderLayout& layout, const std::vector<std::wstring>& logs) {
+    void HorseRaceHUD::DrawRaceLogs(const RenderLayout& render_layout, const std::vector<std::wstring>& logs) {
         // Todo: 그럴 일은 없겠지만, 말들이 8라인을 넘게 달려선다면. 지금 처럼 수동이 아닌
         // (말 + 1) * 2를 한 값을 적용해야 할 것이다
         const int MAX_LOG_LINES = 16;
-        const int LOG_Y_END = layout.draw_y_start + MAX_LOG_LINES - 1;		// 로그의 Y좌표 맥시멈
+        const int LOG_Y_END = render_layout.draw_y_start + MAX_LOG_LINES - 1;		// 로그의 Y좌표 맥시멈
 
         // 최신 로그만 가져오기 위한 인덱스 계산
         int num_logs = static_cast<int>(logs.size());
@@ -111,8 +105,8 @@ namespace horseracing {
 
         // 1. 로그 영역 청소 (DrawBox로 덮어쓰기)
         // 배경색(Black)으로 채워서 이전 프레임 잔상 제거
-        ui_layout_.DrawBox(layout.log_start_x, layout.draw_y_start,
-            layout.width - layout.log_start_x, MAX_LOG_LINES,
+        ui_layout_.DrawBox(render_layout.log_start_x, render_layout.draw_y_start,
+            render_layout.width - render_layout.log_start_x, MAX_LOG_LINES,
             L"", Mint::Color::Black, Mint::Color::Black, Mint::Color::Black);
 
         // 일반적인 채팅창처럼 로그를 아래에서 위로 올려보내기
@@ -124,20 +118,20 @@ namespace horseracing {
             int y = LOG_Y_END - i;
 
             // 2. 로그 출력
-            ui_layout_.DrawTextAligned(layout.log_start_x, y,
-                layout.width - layout.log_start_x - 4, // 여백 좀 줌
+            ui_layout_.DrawTextAligned(render_layout.log_start_x, y,
+                render_layout.width - render_layout.log_start_x - 4, // 여백 좀 줌
                 msg, UI::Alignment::Left, Mint::Color::Gray);
         }
     }
 
-    void HorseRaceHUD::DrawScoreboard(const RenderLayout& layout, const std::vector<Horse*>& sorted_horses) {
+    void HorseRaceHUD::DrawScoreboard(const RenderLayout& render_layout, const std::vector<Horse*>& sorted_horses) {
         // 52 * 2
         const int kScoreBoardWidth = 104;
         const int kScoreBoardHeight = 5 + static_cast<int>(sorted_horses.size());
 
         // 전광판은 중앙에 설치할 것이기 때문에 중앙의 좌표를 구한다
-        int sx = ((layout.width - kScoreBoardWidth) / 2) + 6;
-        int sy = (layout.height - kScoreBoardHeight) / 2;
+        int sx = ((render_layout.width - kScoreBoardWidth) / 2) + 6;
+        int sy = (render_layout.height - kScoreBoardHeight) / 2;
 
         // 1. 박스 그리기 (테두리 + 배경)
         ui_layout_.DrawBox(sx, sy, kScoreBoardWidth, kScoreBoardHeight + 2, L"FINAL RESULTS", Mint::Color::White, Mint::Color::Black, Mint::Color::White);

@@ -1,4 +1,4 @@
-#ifndef HORSERACEHUD_H_
+﻿#ifndef HORSERACEHUD_H_
 #define HORSERACEHUD_H_
 
 #include <string>
@@ -26,12 +26,12 @@ namespace horseracing {
 		HorseRaceHUD(UI::TextLayout& layout);
 
 		// 각 상황에 맞는 UI 그리기 함수들
-		void DrawBettingMenu(const RenderLayout& layout, const std::vector<Horse*>& horses, int selected_idx);
-		void DrawTrack(const RenderLayout& layout);
-		void DrawHorses(const RenderLayout& layout, const std::vector<Horse*>& horses);
-		void DrawRankUI(const RenderLayout& layout, const std::vector<Horse*>& horses, const std::vector<Horse*>& sorted_horses);
-		void DrawRaceLogs(const RenderLayout& layout, const std::vector<std::wstring>& logs);
-		void DrawScoreboard(const RenderLayout& layout, const std::vector<Horse*>& sorted_horses);
+		void DrawBettingMenu(const RenderLayout& render_layout, const std::vector<Horse*>& horses, int selected_idx);
+		void DrawTrack(const RenderLayout& render_layout, Mint::Renderer& renderer);
+		void DrawHorses(const RenderLayout& render_layout, const std::vector<Horse*>& horses, Mint::Renderer& renderer);
+		void DrawRankUI(const RenderLayout& render_layout, const std::vector<Horse*>& horses, const std::vector<Horse*>& sorted_horses);
+		void DrawRaceLogs(const RenderLayout& render_layout, const std::vector<std::wstring>& logs);
+		void DrawScoreboard(const RenderLayout& render_layout, const std::vector<Horse*>& sorted_horses);
 
 	private:
 		UI::TextLayout& ui_layout_;
